@@ -21,10 +21,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKHUB_USERNAME}}/${{ secrets.DOCKHUB_REPOSITORY}}:latest .
+        run: docker build -t "${{ secrets.DOCKER_USERNAME}}/${{ secrets.DOCKER_REPOSITORY}}:latest .
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKHUB_USERNAME}}/${{ secrets.DOCKHUB_REPOSITORY}}:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME}}/${{ secrets.DOCKER_REPOSITORY}}:latest
 
   pull_and_run_on_droplet:
     name: Pull and Run Docker Image on Droplet
@@ -43,5 +43,5 @@ jobs:
 
       - name: Pull and run Docker image on Droplet
         run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker pull ${{ secrets.DOCKHUB_USERNAME}}/${{ secrets.DOCKHUB_REPOSITORY}}:latest'
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker run -d -p 80:80 ${{ secrets.DOCKHUB_USERNAME}}/${{ secrets.DOCKHUB_REPOSITORY}}:latest'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker pull ${{ secrets.DOCKER_USERNAME}}/${{ secrets.DOCKER_REPOSITORY}}:latest'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker run -d -p 80:80 ${{ secrets.DOCKER_USERNAME}}/${{ secrets.DOCKER_REPOSITORY}}:latest'
