@@ -1,4 +1,4 @@
-FROM golang:1.17-buster as builder
+FROM bitnami/golang:1.13 as builder
 
 # install dependencies
 RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
