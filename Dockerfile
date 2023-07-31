@@ -32,8 +32,9 @@ WORKDIR $GOPATH/src
 
 COPY . .
 
+RUN cd server && go mod download
 # Build the Go app
-RUN go build server/cmd/server.go
+RUN cd server && go build cmd/server.go
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
