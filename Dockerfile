@@ -24,11 +24,7 @@ ENV GO111MODULE=on
 RUN go version
 
 # Set the working directory
-# Create a directory for the Go workspace
-RUN mkdir -p $GOPATH/src $GOPATH/bin
-
-# Set the working directory
-WORKDIR $GOPATH/src
+WORKDIR /app
 
 COPY . .
 
