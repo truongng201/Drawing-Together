@@ -9,7 +9,7 @@ WORKDIR /app
 # Retrieve application dependencies.
 # This allows the container build to reuse cached dependencies.
 # Expecting to copy go.mod and if present go.sum.
-RUN go env -w CGO_ENABLED=0
+ENV CGO_ENABLED=0
 COPY go.* ./
 RUN go mod download
 
