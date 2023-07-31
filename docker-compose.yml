@@ -17,6 +17,6 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=auth_db
-# volumes:
-#   db:
-#     driver: local
+volumes:
+  db:
+    driver: local
