@@ -40,4 +40,4 @@ RUN cd server && go build cmd/server.go
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["cd", "server", "&&", "cmd/server"]
+CMD ["./server/cmd/server"]
