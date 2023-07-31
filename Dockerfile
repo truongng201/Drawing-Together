@@ -20,14 +20,19 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/go"
 ENV GO111MODULE=on
 
-# Create a directory for Go workspace
-RUN mkdir -p $GOPATH/src $GOPATH/bin
-
-# Set the working directory
-WORKDIR $GOPATH/src
-
 # Verify Go installation
 RUN go version
 
-# Set the entry point to the Go shell
-ENTRYPOINT ["go"]
+# Set the working directory
+WORKDIR /src
+
+COPY . .
+
+# Build the Go app
+RUN go build -o server/cmd/server.go
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
+
+# Command to run the executable
+CMD ["server/cmd/server"]
