@@ -1,9 +1,7 @@
-.git
-
 /bin
-
-/Docker
 
 .gitignore
 
 /tmp
+
+.github
