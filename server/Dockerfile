@@ -30,10 +30,10 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies for the server
-RUN go mod download
+RUN cd server && go mod download
 
 # Build the Go app
-RUN cd cmd && go build -o server
+RUN cd server/cmd && go build -o server
 
 # Command to run the executable
-CMD cd cmd && ./server
+CMD cd server/cmd && ./server

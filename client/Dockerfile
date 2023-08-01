@@ -25,11 +25,11 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies for the client
-RUN npm install
+RUN cd client && npm install
 
 # Build the client
-RUN npm run build
+RUN cd client && npm run build
 
 # Command to run the executable
-CMD npm run start
+CMD cd client && npm run start
 
