@@ -19,7 +19,7 @@ RUN wget -O go.tar.gz $GOLANG_URL && \
     rm go.tar.gz
 
 # Download and install Nodejs
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
+RUN wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -38,13 +38,7 @@ RUN node -v && npm -v
 # Set the working directory
 WORKDIR /app
 
-# Add non-root user
-RUN addgroup --system user && adduser --system --no-create-home --group user
-RUN chown -R user:user /app && chmod -R 755 /app
-
-# Switch to non-root user
-USER user
-
+# Copy application to working directory
 COPY . .
 
 # Install dependencies for the server

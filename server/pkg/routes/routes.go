@@ -2,7 +2,8 @@ package routes
 
 import (
 	"runtime/debug"
-
+        "net/http"
+	
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -32,6 +33,7 @@ func Routes(e *echo.Echo) *echo.Echo {
       Version: commit_hash,
     })
 	})
-
+	
+	e.File("/", "../../../client/out/index.html")
 	return e
 }
