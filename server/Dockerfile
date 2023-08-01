@@ -23,9 +23,6 @@ ENV GO111MODULE=on
 # Verify Go installation
 RUN go version
 
-# Verify Node.js and npm versions
-RUN node -v && npm -v
-
 # Set the working directory
 WORKDIR /app
 
