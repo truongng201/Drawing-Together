@@ -27,7 +27,7 @@ RUN go version
 WORKDIR /app
 
 # Copy application to working directory
-COPY /server .
+COPY . .
 
 # Install dependencies for the server
 RUN go mod download
