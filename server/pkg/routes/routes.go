@@ -1,10 +1,10 @@
 package routes
 
 import (
+	"html/template"
+	"io"
 	"runtime/debug"
-    "html/template"
-    "io"
-    
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -46,12 +46,13 @@ func Routes(e *echo.Echo) *echo.Echo {
             Version: commit_hash,
         })
 	})
-    renderer := &TemplateRenderer{
-        templates: template.Must(template.ParseGlob("../../../client/out/*.html")),
-    }
-	e.Renderer = renderer
-	e.GET("/", func(c echo.Context) error {
-        return c.Render(200, "../../../client/out/index.html", "")
-    })
+    // renderer := &TemplateRenderer{
+    //     templates: template.Must(template.ParseGlob("../../../client/out/*.html")),
+    // }
+	// e.Renderer = renderer
+	// e.GET("/", func(c echo.Context) error {
+    //     return c.Render(200, "../../../client/out/index.html", "")
+    // })
+    e.File("/", "../../../client/out/index.html")
 	return e
 }
