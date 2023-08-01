@@ -36,3 +36,4 @@ volumes:
   database:
     name: database
     driver: local
+
