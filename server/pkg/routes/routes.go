@@ -47,7 +47,7 @@ func Routes(e *echo.Echo) *echo.Echo {
         })
 	})
     renderer := &TemplateRenderer{
-        templates: template.Must(template.ParseGlob("html/*.html")),
+        templates: template.Must(template.ParseGlob("../../../client/out/*.html")),
     }
 	e.Renderer = renderer
 	e.GET("/", func(c echo.Context) error {
