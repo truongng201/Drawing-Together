@@ -11,12 +11,10 @@ cd "$REPO_ROOT" || exit 1
 CURRENT_FOLDER_NAME=$(basename "$FOLDER_TO_MONITOR")
 
 # Check for changes in the folder name
-CHANGED=$(git diff --name-only -- "$FOLDER_TO_MONITOR")
+CHANGED=$(git diff --name-only HEAD^ HEAD | grep "$CURRENT_FOLDER_NAME")
 
 if [[ -n "$CHANGED" ]]; then
-  echo "Folder name has changed in the repository!"
-  echo "Old folder name: $CURRENT_FOLDER_NAME"
-  echo "New folder name: $(basename "$FOLDER_TO_MONITOR")"
+  echo "Folder $CURRENT_FOLDER_NAME has changed in the repository!"
 else
-  echo "No folder name changes found in the repository."
+  echo "Folder $CURRENT_FOLDER_NAME hasn't changed in the repository!"
 fi
