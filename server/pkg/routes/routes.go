@@ -10,7 +10,7 @@ func Routes(e *echo.Echo) *echo.Echo {
 	e.Use(middleware.Logger())
 
 	e.GET("/health", func(c echo.Context) error {
-		return c.String(200, "Ok")
+		return c.String(200, "Status oke")
 	})
 
 	return e
