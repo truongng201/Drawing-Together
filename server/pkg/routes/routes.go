@@ -1,14 +1,15 @@
 package routes
 
 import (
+	"runtime/debug"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-  "runtime/debug"
 )
   
 type HealthCheck struct {
-  status  string `json:"status"`
-  version string `json:"version"`
+  Status  string `json:"status" xml:"status"`
+  Version string `json:"version" xml:"version"`
 }
 
 var commit_hash = func() string {
@@ -26,10 +27,11 @@ func Routes(e *echo.Echo) *echo.Echo {
 	e.Use(middleware.Logger())
 
 	e.GET("/health", func(c echo.Context) error {
-		return c.String(200, &HealthCheck{
-      status: "OK",
-      version: commit_hash 
-    })
+    u := &HealthCheck{
+      Status: "Ok",
+      Version: commit_hash,
+    }
+		return c.JSON(200, u)
 	})
 
 	return e
