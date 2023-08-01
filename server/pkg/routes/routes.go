@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"html/template"
-	"io"
 	"runtime/debug"
 
 	"github.com/labstack/echo/v4"
@@ -25,17 +23,6 @@ var commit_hash = func() string {
     return ""
 }()
 
-type TemplateRenderer struct {
-	templates *template.Template
-}
-func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	// Add global methods if data is a map
-	if viewContext, isMap := data.(map[string]interface{}); isMap {
-		viewContext["reverse"] = c.Echo().Reverse
-	}
-
-	return t.templates.ExecuteTemplate(w, name, data)
-}
 
 func Routes(e *echo.Echo) *echo.Echo {
 	e.Use(middleware.Logger())
@@ -46,13 +33,6 @@ func Routes(e *echo.Echo) *echo.Echo {
             Version: commit_hash,
         })
 	})
-    // renderer := &TemplateRenderer{
-    //     templates: template.Must(template.ParseGlob("../../../client/out/*.html")),
-    // }
-	// e.Renderer = renderer
-	// e.GET("/", func(c echo.Context) error {
-    //     return c.Render(200, "../../../client/out/index.html", "")
-    // })
-    e.File("/", "../../../client/out/index.html")
-	return e
+
+    return e
 }
