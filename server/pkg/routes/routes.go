@@ -23,15 +23,16 @@ var commit_hash = func() string {
     return ""
 }()
 
+
 func Routes(e *echo.Echo) *echo.Echo {
 	e.Use(middleware.Logger())
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, &HealthCheck{
-      Status: "Ok",
-      Version: commit_hash,
-    })
+            Status: "Ok",
+            Version: commit_hash,
+        })
 	})
 
-	return e
+    return e
 }

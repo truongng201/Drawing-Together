@@ -1,19 +1,39 @@
-FROM golang:1.18-buster as builder
+# Use Debian as the base image
+FROM debian:latest
 
-# install dependencies
-RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
+# Set environment variables for Go installation
+ENV GOLANG_VERSION 1.18
+ENV GOLANG_URL https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz
 
-# Create and change to the app directory.
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget ca-certificates git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and install Go
+RUN wget -O go.tar.gz $GOLANG_URL && \
+    tar -C /usr/local -xzf go.tar.gz && \
+    rm go.tar.gz
+
+# Set Go environment variables
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/go"
+ENV GO111MODULE=on
+
+# Verify Go installation
+RUN go version
+
+# Set the working directory
 WORKDIR /app
 
-# Retrieve application dependencies.
-# This allows the container build to reuse cached dependencies.
-# Expecting to copy go.mod and if present go.sum.
-COPY go.* ./
-RUN go mod download
+# Copy application to working directory
+COPY . .
 
-EXPOSE 8080
-# Copy local code to the container image.
-COPY . ./
+# Install dependencies for the server
+RUN cd server && go mod download
 
-CMD ["air", "-c", ".air.toml"]
+# Build the Go app
+RUN cd server/cmd && go build -o server
+
+# Command to run the executable
+CMD cd server/cmd && ./server
