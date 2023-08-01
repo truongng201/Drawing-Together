@@ -29,11 +29,12 @@ WORKDIR /app
 COPY . .
 
 RUN cd server && go mod download
+
 # Build the Go app
-RUN cd server && go build cmd/server.go
+RUN cd server/cmd && go build -o server
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Command to run the executable
-CMD cd server && ./server
+CMD cd server/cmd && ./server
