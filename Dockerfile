@@ -7,7 +7,7 @@ ENV GOLANG_URL https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz
 
 # Install required dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget ca-certificates && \
+    apt-get install -y --no-install-recommends wget ca-certificates git && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install Go
