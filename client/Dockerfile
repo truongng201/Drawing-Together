@@ -15,9 +15,6 @@ RUN wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Verify Go installation
-RUN go version
-
 # Verify Node.js and npm versions
 RUN node -v && npm -v
 
