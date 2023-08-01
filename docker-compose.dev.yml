@@ -1,24 +1,23 @@
 version: "3.1"
 services:
   server:
-    build: 
+    build:
       context: .
       dockerfile: ./server/Dockerfile
     container_name: server
     restart: unless-stopped
     ports:
       - "8080:8080"
-  
+
   client:
-    build: 
+    build:
       context: .
       dockerfile: ./client/Dockerfile
     container_name: client
-    command: npm run start
     restart: unless-stopped
     ports:
       - "3000:3000"
-    
+
   database:
     image: postgres:14-alpine
     container_name: database

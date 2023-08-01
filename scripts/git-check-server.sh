@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the folder you want to monitor
-FOLDER_TO_MONITOR="client"
+FOLDER_TO_MONITOR="../server"
 
 # Go to the repository root directory
 REPO_ROOT=$(git rev-parse --show-toplevel)
@@ -15,6 +15,8 @@ CHANGED=$(git diff --name-only HEAD^ HEAD | grep "$CURRENT_FOLDER_NAME")
 
 if [[ -n "$CHANGED" ]]; then
   echo "Folder $CURRENT_FOLDER_NAME has changed in the repository!"
+  exit 1
 else
   echo "Folder $CURRENT_FOLDER_NAME hasn't changed in the repository!"
+  exit 0
 fi

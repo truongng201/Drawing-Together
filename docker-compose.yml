@@ -14,7 +14,6 @@ services:
       context: .
       dockerfile: ./client/Dockerfile
     container_name: client
-    command: npm run start
     restart: unless-stopped
     ports:
       - "3000:3000"
