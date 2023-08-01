@@ -22,14 +22,14 @@ RUN node -v && npm -v
 WORKDIR /app
 
 # Copy application to working directory
-COPY . .
+COPY /client .
 
 # Install dependencies for the client
-RUN cd client && npm install
+RUN npm install
 
 # Build the client
-RUN cd client && npm run build
+RUN npm run build
 
 # Command to run the executable
-CMD cd client && npm run start
+CMD npm run start
 
