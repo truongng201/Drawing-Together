@@ -22,7 +22,7 @@ RUN node -v && npm -v
 WORKDIR /app
 
 # Copy application to working directory
-COPY /client .
+COPY . .
 
 # Install dependencies for the client
 RUN npm install

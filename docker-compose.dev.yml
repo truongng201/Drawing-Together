@@ -3,7 +3,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
+      dockerfile: ./Dockerfile
     container_name: server
     restart: unless-stopped
     ports:
@@ -11,8 +11,8 @@ services:
 
   client:
     build:
-      context: .
-      dockerfile: ./client/Dockerfile
+      context: ./client
+      dockerfile: ./Dockerfile
     container_name: client
     restart: unless-stopped
     ports:
@@ -48,3 +48,4 @@ volumes:
   database:
     name: database
     driver: local
+
