@@ -1,9 +1,7 @@
 # ---------------------------------------
-# Production stage
+# Development stage
 # ---------------------------------------
-
-# Use Debian as the base image
-FROM debian:latest as production
+FROM debian:latest as development
 
 # Set environment variables for Go installation
 ENV GOLANG_VERSION 1.18
@@ -11,7 +9,7 @@ ENV GOLANG_URL https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz
 
 # Install required dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget ca-certificates git && \
+    apt-get install -y --no-install-recommends wget ca-certificates git curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install Go
@@ -24,20 +22,13 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/go"
 ENV GO111MODULE=on
 
-# Verify Go installation
-RUN go version
+# install air golang dependencies for devlement
+RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
 
-# Set the working directory
+# Create and change to the app directory.
 WORKDIR /app
 
-# Copy application to working directory
 COPY . .
+RUN go mod download
 
-# Install dependencies for the server
-RUN cd server && go mod download
-
-# Build the Go app
-RUN cd server/cmd && go build -o server
-
-# Command to run the executable
-CMD cd server/cmd && ./server
+CMD ["air", "-c", ".air.toml"]
