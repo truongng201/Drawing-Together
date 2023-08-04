@@ -1,5 +1,5 @@
 # Use Debian as the base image
-FROM debian:latest
+FROM debian:latest 
 
 # Set environment variables for Go installation
 ENV GOLANG_VERSION 1.18
