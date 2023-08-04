@@ -21,31 +21,36 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build Client Docker image
-        run:
+        run: |
           chmod +x ./scripts/git-check.sh
           is_changed = $(./scripts/git-check.sh ../client | grep "changed")
-          if [[ -n "$is_changed" ]]; then
+          if [[ -n "$is_changed" ]]
+          then
             docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-client:latest ./client --target production
           fi
         shell: bash
 
       - name: Push Client Docker image to Docker Hub
-        run:
-          if [[ -n "$is_changed" ]]; then 
+        run: |
+          if [[ -n "$is_changed" ]]
+          then
             docker push ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-client:latest
           fi
         shell: bash
 
       - name: Build Server Docker image
-        run: 
+        run: |
           is_changed = $(./scripts/git-check.sh ../server | grep "changed")
-          if [[ -n "$is_changed" ]]; then
+          if [[ -n "$is_changed" ]]
+          then
             docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-server:latest . --target production
-
+          fi
       - name: Push Server Docker image to Docker Hub
-        run: 
-          if [[ -n "$is_changed" ]]; then
+        run: |
+          if [[ -n "$is_changed" ]]
+          then
             docker push ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-server:latest
+          fi
 
   pull_and_run_on_droplet:
     needs: [build_and_push]
