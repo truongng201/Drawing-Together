@@ -10,7 +10,7 @@ FOLDER_TO_MONITOR=$1
 CURRENT_FOLDER_NAME=$(basename "$FOLDER_TO_MONITOR")
 
   # Check for changes in the folder name
-CHANGED=$(git diff --name-only HEAD^ HEAD | grep "$CURRENT_FOLDER_NAME")
+CHANGED=$(git diff --name-only HEAD~ HEAD | grep "$CURRENT_FOLDER_NAME")
 
 if [[ -n "$CHANGED" ]]; then
   echo "$FOLDER_TO_MONITOR changed"
