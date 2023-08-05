@@ -3,8 +3,8 @@
 FOLDER_TO_MONITOR=$1
 
 # Go to the repository root directory
-REPO_ROOT=$(git rev-parse --show-toplevel)
-cd "$REPO_ROOT" || exit 1
+# REPO_ROOT=$(git rev-parse --show-toplevel)
+# cd "$REPO_ROOT" || exit 1
 
 # Get the current folder name
 CURRENT_FOLDER_NAME=$(basename "$FOLDER_TO_MONITOR")
