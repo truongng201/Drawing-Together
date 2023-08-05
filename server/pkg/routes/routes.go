@@ -29,7 +29,7 @@ func Routes(e *echo.Echo) *echo.Echo {
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, &HealthCheck{
-            Status: "Ok",
+            Status: "Oke",
             Version: commit_hash,
         })
 	})
