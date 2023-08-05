@@ -23,7 +23,6 @@ jobs:
       - name: Build Client Docker image
         run: |
           chmod +x ./scripts/git-check.sh
-          git fetch origin main:main
           is_changed = $(./scripts/git-check.sh ../client | grep "changed")
           if [[ -n "$is_changed" ]]
           then
