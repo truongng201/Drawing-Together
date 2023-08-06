@@ -32,7 +32,6 @@ jobs:
         run: echo "Folder nginx has not changed"
 
   pull_and_run_on_droplet:
-    needs: [build_and_push]
     name: Pull Config and Run Docker Image on Droplet
     needs: [check_folder_nginx_changed]
     if: needs.check_folder_nginx_changed.outputs.is_changed == 'true'
