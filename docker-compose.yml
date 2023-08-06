@@ -49,6 +49,16 @@ services:
       - database
     volumes:
       - ./pgadmin:/var/lib/pgadmin
+  
+  nginx:
+    image: nginx:stable-bullseye
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - API_URL=localhost
 
 volumes:
   pgadmin:

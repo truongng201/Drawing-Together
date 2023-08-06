@@ -1,7 +1,7 @@
 # ---------------------------------------
 # Development stage
 # ---------------------------------------
-FROM debian:latest as development
+FROM debian:11-slim as development
 
 # Set environment variables for Node.js installation
 ENV NODE_VERSION 18.x

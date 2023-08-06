@@ -3,7 +3,7 @@
 # ---------------------------------------
 
 # Use Debian as the base image
-FROM debian:latest as production
+FROM debian:11-slim as production
 
 # Set environment variables for Go installation
 ENV GOLANG_VERSION 1.18
