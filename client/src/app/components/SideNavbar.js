@@ -5,12 +5,9 @@ export default function SideNavbar({ children }) {
                 hi
                 <nav>
                     <ul> Home </ul>
-                    <ul> About </ul>
-                    <ul> Contact </ul>
+                    <ul> Monitor </ul>
+                    <ul> Blog </ul>
                 </nav>
-            </div>
-            <div className="page-content">
-                {children}
             </div>
         </div>
     )

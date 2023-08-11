@@ -10,8 +10,8 @@ services:
     hostname: server
     ports:
       - "8080:8080"
-    networks:
-      - alpha
+    # networks:
+    #   - alpha
     volumes:
       - "./server:/app"
 
@@ -25,8 +25,8 @@ services:
     hostname: client
     ports:
       - "3000:3000"
-    networks:
-      - alpha
+    # networks:
+    #   - alpha
     volumes:
       - "./client:/app"
       - "/app/node_modules"
@@ -55,7 +55,7 @@ services:
       - database
     volumes:
       - ./pgadmin:/var/lib/pgadmin
-  
+
   nginx:
     image: nginx:stable-bullseye
     container_name: nginx
@@ -64,8 +64,8 @@ services:
     environment:
       - FRONTEND_URL=localhost1
       - BACKEND_URL=localhost2
-    networks:
-      - alpha
+    # networks:
+    #   - alpha
 
 volumes:
   pgadmin:
@@ -74,6 +74,6 @@ volumes:
   database:
     name: database
     driver: local
-networks:
-  alpha:
-    external: true
+# networks:
+#   alpha:
+#     external: true
