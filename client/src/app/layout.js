@@ -12,8 +12,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SideNavbar />
-        {children}
+        <div className='left-container'>
+          <SideNavbar />
+        </div>
+        <div className='right-container flex min-h-screen flex-col'>{children}</div>
       </body>
     </html>
   )
