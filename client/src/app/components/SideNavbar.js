@@ -1,5 +1,6 @@
 import './SideNavbar.css'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function SideNavbar() {
     const pages = [
@@ -41,7 +42,7 @@ export default function SideNavbar() {
                 {pages.map(page => {
                     return (
                         <Link className={page.className} href={page.link}>
-                            <img src={page.iconPath} />
+                            <Image width={16} height={16} src={page.iconPath} alt='page icon' />
                             <div>{page.name}</div>
                         </Link>
                     )
@@ -49,9 +50,15 @@ export default function SideNavbar() {
             </div>
             <div className='developer-info'>
                 <div className='username'>Truong Nguyen</div>
-                <img src="/avatar.png" className='avatar' />
+                <Image
+                    src="/avatar.png"
+                    className='avatar'
+                    alt='developer avatar'
+                    width={100}
+                    height={100}
+                />
                 <div className='bio'>
-                    I'm a software engineer who loves to build things. I write about building scalable systems.
+                    I&apos;m a software engineer who loves to build things. I write about building scalable systems.
                 </div>
                 <div className='social-media'>
                     <div className='github'>

@@ -4,15 +4,7 @@ export default function Monitor() {
 
             <div className="monitor">
                 <div className="monitor-header">
-                    {
-                        [...Array(100)].map((e, i) => {
-                            return (
-                                <div className="monitor-header-item">
-                                    <h1>monitor</h1>
-                                </div>
-                            )
-                        })
-                    }
+                    <h1>Monitor</h1>
                 </div>
             </div>
         </div>
