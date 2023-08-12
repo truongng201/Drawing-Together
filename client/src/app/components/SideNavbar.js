@@ -39,9 +39,9 @@ export default function SideNavbar() {
         <div className="sidenavbar">
             <Link className='logo' href='/'><img src="/logo/logo-no-background.svg" /></Link>
             <div className="pages">
-                {pages.map(page => {
+                {pages.map((page, index) => {
                     return (
-                        <Link className={page.className} href={page.link}>
+                        <Link key={index} className={page.className} href={page.link}>
                             <Image width={16} height={16} src={page.iconPath} alt='page icon' />
                             <div>{page.name}</div>
                         </Link>
