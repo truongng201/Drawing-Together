@@ -1,0 +1,34 @@
+name: Project Alpha CI/CD monitor config pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_folder_monitor_changed:
+    name: Check if monitor folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.monitor }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            monitor:
+              - 'monitor/**'
+
+      # run only if "monitor" files were changed
+      - name: monitor is changed
+        if: steps.changes.outputs.monitor == 'true'
+        run: echo "Folder monitor has changed"
+
+      # run only if "monitor" files were not changed
+      - name: monitor is not changed
+        if: steps.changes.outputs.monitor == 'false'
+        run: echo "Folder monitor has not changed"
+
+  
