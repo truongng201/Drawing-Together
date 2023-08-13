@@ -10,8 +10,8 @@ services:
     hostname: server
     ports:
       - "8080:8080"
-    # networks:
-    #   - alpha
+    networks:
+      - alpha
     volumes:
       - "./server:/app"
 
