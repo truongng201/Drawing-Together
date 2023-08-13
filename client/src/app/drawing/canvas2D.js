@@ -9,6 +9,10 @@ export default function Canvas2D(){
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
+        canvas.style.width = "98%";
+        canvas.style.height = "95%";
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
         setContext(ctx);
     }, []);
 
@@ -35,8 +39,6 @@ export default function Canvas2D(){
         <canvas
             ref={canvasRef}
             className='canvas2D'
-            width={800}
-            height={600}
             onMouseDown={startDrawing}
             onMouseMove={continueDrawing}
             onMouseUp={stopDrawing}
