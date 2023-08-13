@@ -23,25 +23,23 @@ export default function Chat() {
 
         wsChat.openSocket();
         wsChat.reconnectSocket();
-        wsChat.receiveMessage(
-            (data) => {
-                setMessagesChat([...messagesChat, { username: 'test chat', content: data }]);
-            }
-        );
         return () => {
             wsGuess.closeSocket();
         }
     }, [messagesChat]);
-
+    wsChat.receiveMessage(
+        (data) => {
+            console.log("Line32", messagesChat);
+            setMessagesChat([...messagesChat, { username: 'test chat', content: data }]);
+        }
+    );
     const sendMessage = (event) => {
         if (event.key === 'Enter' && event.target.value !== '') {
             if (event.target.placeholder === 'Chat here') {
-                setMessagesChat([...messagesChat, { username: 'test chat 0', content: event.target.value }]);
                 wsChat.sendMessage(event.target.value);
                 event.target.value = '';
             }
             else if (event.target.placeholder === 'Guess here') {
-                setMessagesGuess([...messagesGuess, { username: 'test guess 0', content: event.target.value }]);
                 wsGuess.sendMessage(event.target.value);
                 event.target.value = '';
             }
