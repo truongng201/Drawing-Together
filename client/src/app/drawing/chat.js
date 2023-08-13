@@ -1,16 +1,33 @@
+import Socket from '../components/socket';
 import './chat.css';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Chat() {
     const [messagesChat, setMessagesChat] = useState([]);
     const [messagesGuess, setMessagesGuess] = useState([]);
 
-    const sendMessage = (event) => {
+    //setup websocket
+    const ws = new Socket();
 
+    useEffect(() => {
+        ws.openSocket();
+        ws.reconnectSocket();
+        ws.receiveMessage(
+            (data) => {
+                setMessagesChat([...messagesChat, { username: 'test2', content: data }]);
+            }
+        );
+        return () => {
+            ws.closeSocket();
+        }
+    }, [messagesChat]);
+
+    const sendMessage = (event) => {
         if (event.key === 'Enter' && event.target.value !== '') {
             if (event.target.placeholder === 'Guess here') {
-                setMessagesChat([...messagesChat, { username: 'test', content: event.target.value }]);
+                setMessagesChat([...messagesChat, { username: 'test1', content: event.target.value }]);
+                ws.sendMessage(event.target.value);
                 event.target.value = '';
             }
             else if (event.target.placeholder === 'Chat here') {

@@ -13,6 +13,8 @@
 
 .canvas2D{
     grid-column: 1 / span 1;
+    width: 98%;
+    height: 95%;
 }
 
 .dashboard{

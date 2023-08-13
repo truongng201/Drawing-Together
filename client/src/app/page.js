@@ -54,7 +54,7 @@ export default function Home() {
 
       <h4 id="database">Database</h4>
       <p>PostgreSQL is used as the database for the project. The database is used to store user information, game history, and leaderboard data. The database is hosted on a Digital Ocean droplet.</p>
-      <p>Tables:
+      <div>Tables:
         <ul>
           <li>users</li>
           <li>rooom</li>
@@ -62,7 +62,7 @@ export default function Home() {
           <li>leaderboard</li>
           <li>user_game_history</li>
         </ul>
-      </p>
+      </div>
 
       <h4 id="reverse-proxy">Reverse Proxy</h4>
       <p>Nginx is used as a reverse proxy to serve the backend and frontend on port 80 with a specific subdomain</p>
@@ -84,10 +84,10 @@ export default function Home() {
       <p>Monitoring and logging is done using Prometheus and Grafana. Prometheus is used to scrape metrics from the backend. Grafana is used to display the metrics scraped from Prometheus. The monitoring and logging is hosted on a Digital Ocean droplet.</p>
 
       <h4 id="cicd">CI/CD</h4>
-      <p>Github Actions is used for CI/CD.
+      <div>Github Actions is used for CI/CD.
         First, github actions is used to check whether which folder is updated.
         Then, Github Actions is used to build and push the docker images to Docker Hub.
-        Finally, Github Actions is also used to deploy the project to Digital Ocean.</p>
+        Finally, Github Actions is also used to deploy the project to Digital Ocean.</div>
 
       <h2 id="installation-and-setup-instructions-local">Installation and Setup Instructions (Local)</h2>
       <ol>
