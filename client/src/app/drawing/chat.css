@@ -2,4 +2,45 @@
     -webkit-box-shadow: 0px 0px 16px 5px rgba(0,0,0,0.20); 
     box-shadow: 0px 0px 16px 5px rgba(0,0,0,0.10);
     border-radius: 10px;
+    padding:10px;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    flex: 1
+}
+
+.chat-input{
+    padding: 10px 15px;
+    border-radius: 7px;
+    border: 3px solid #e6e6e6;
+    width: 90%;
+    margin-bottom: 0;
+    justify-content: flex-end;
+    color: #797979;
+    height: 40px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
+
+
+.chat-input:focus{
+    outline: none;
+    border: 3px solid #dfdfdf;
+}
+
+.chat-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chat-messages{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    height: 100%;
+    width: 380px;
+    padding: 10px;
+    overflow-wrap: break-word;
 }
