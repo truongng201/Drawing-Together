@@ -1,3 +1,7 @@
+'use client'
+
+import Canvas2D from "./canvas2D";
+
 export default function Drawing() {
     return (
         <div className="drawing-container">
@@ -6,6 +10,7 @@ export default function Drawing() {
                 <div className="drawing-header">
                     <h1>Drawing</h1>
                 </div>
+                <Canvas2D />
             </div>
         </div>
     )
