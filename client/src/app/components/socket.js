@@ -1,6 +1,7 @@
 class Socket {
-    constructor() {
-        this.socket = new WebSocket(process.env.SOCKET_URI);
+    constructor(path) {
+        this.URI = process.env.SOCKET_URI + '/' + path;
+        this.socket = new WebSocket(this.URI);
     }
 
 
@@ -36,7 +37,7 @@ class Socket {
         this.socket.onclose = () => {
             console.log('Socket closed. Reconnecting...');
             setTimeout(() => {
-                this.socket = new WebSocket(process.env.SOCKET_URI)
+                this.socket = new WebSocket(this.URI)
                 this.openSocket();
             }, 1000);
         }
