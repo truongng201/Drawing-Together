@@ -36,11 +36,18 @@ export default function Chat() {
     const sendMessage = (event) => {
         if (event.key === 'Enter' && event.target.value !== '') {
             if (event.target.placeholder === 'Chat here') {
-                wsChat.sendMessage(event.target.value);
+                wsChat.sendMessage(
+                    JSON.stringify(
+                        {
+                            "email": "truongng",
+                            "username": "truongng",
+                            "message": event.target.value,
+                        }))
+
                 event.target.value = '';
             }
             else if (event.target.placeholder === 'Guess here') {
-                wsGuess.sendMessage(event.target.value);
+                // wsGuess.sendMessage(event.target.value);
                 event.target.value = '';
             }
         }
