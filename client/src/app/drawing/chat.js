@@ -8,40 +8,42 @@ export default function Chat() {
     const [messagesGuess, setMessagesGuess] = useState([]);
 
     //setup websocket
-    const wsGuess = new Socket("messagesGuess");
+    // const wsGuess = new Socket("messagesGuess");
     const wsChat = new Socket("messagesChat");
 
 
     useEffect(() => {
-        wsGuess.openSocket();
-        wsGuess.reconnectSocket();
-        wsGuess.receiveMessage(
-            (data) => {
-                setMessagesGuess([...messagesGuess, { username: 'test guess', content: data }]);
-            }
-        );
+        // wsGuess.openSocket();
+        // wsGuess.reconnectSocket();
+        // wsGuess.receiveMessage(
+        //     (data) => {
+        //         setMessagesGuess([...messagesGuess, { username: 'test guess', content: data }]);
+        //     }
+        // );
 
         wsChat.openSocket();
         wsChat.reconnectSocket();
+        wsChat.receiveMessage(
+            (data) => {
+                data = JSON.parse(data);
+                console.log(data);
+                setMessagesChat([...messagesChat, { content: data.message, username: data.username }]);
+            }
+        );
         return () => {
-            wsGuess.closeSocket();
+            wsChat.closeSocket();
         }
     }, [messagesChat]);
-    wsChat.receiveMessage(
-        (data) => {
-            console.log("Line32", messagesChat);
-            setMessagesChat([...messagesChat, { username: 'test chat', content: data }]);
-        }
-    );
+
     const sendMessage = (event) => {
         if (event.key === 'Enter' && event.target.value !== '') {
             if (event.target.placeholder === 'Chat here') {
                 wsChat.sendMessage(
                     JSON.stringify(
                         {
-                            "email": "truongng",
-                            "username": "truongng",
-                            "message": event.target.value,
+                            email: "truongng",
+                            username: "truongng",
+                            message: event.target.value,
                         }))
 
                 event.target.value = '';

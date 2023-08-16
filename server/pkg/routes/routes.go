@@ -16,9 +16,9 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
         return controller.HealthCheckController.Execute(c)
     })
 
-    e.GET("/ws/messagesGuess", func(c echo.Context) error {
-        return controller.WSMessageGuessController.Execute(c)
-    })
+    // e.GET("/ws/messagesGuess", func(c echo.Context) error {
+    //     return controller.WSMessageGuessController.Execute(c)
+    // })
 
     e.GET("/ws/messagesChat", func(c echo.Context) error {
         return controller.WSMessageChatController.Execute(c)

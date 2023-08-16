@@ -1,9 +1,9 @@
 package main
 
 import (
-	config     "server/pkg/config"
+	config "server/pkg/config"
 	controller "server/pkg/controller"
-	routes     "server/pkg/routes"
+	routes "server/pkg/routes"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,6 +16,8 @@ func main() {
 	controller := controller.AppController{}
 
 	e = routes.Routes(e, controller)
+
+	go controller.WSMessageChatController.HandleMessages()
 	e.Logger.Info("Server is running on port 8080")
 	e.Logger.Fatal(e.Start(":8080"))
 }
