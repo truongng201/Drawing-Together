@@ -9,36 +9,23 @@ export default function Chat() {
 
     //setup websocket
     // const wsGuess = new Socket("messagesGuess");
+
     const wsChat = new Socket("messagesChat");
-
-
     useEffect(() => {
-        // wsGuess.openSocket();
-        // wsGuess.reconnectSocket();
-        // wsGuess.receiveMessage(
-        //     (data) => {
-        //         setMessagesGuess([...messagesGuess, { username: 'test guess', content: data }]);
-        //     }
-        // );
-
-        wsChat.openSocket();
-        wsChat.reconnectSocket();
-        wsChat.receiveMessage(
-            (data) => {
-                data = JSON.parse(data);
-                console.log(data);
-                setMessagesChat([...messagesChat, { content: data.message, username: data.username }]);
-            }
-        );
+        wsChat.open();
+        wsChat.receive((data) => {
+            console.log(data);
+            setMessagesChat([...messagesChat, { username: data.username, content: data.message }]);
+        });
         return () => {
-            wsChat.closeSocket();
+            wsChat.close();
         }
     }, [messagesChat]);
 
     const sendMessage = (event) => {
         if (event.key === 'Enter' && event.target.value !== '') {
             if (event.target.placeholder === 'Chat here') {
-                wsChat.sendMessage(
+                wsChat.send(
                     JSON.stringify(
                         {
                             email: "truongng",

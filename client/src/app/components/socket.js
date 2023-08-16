@@ -1,46 +1,53 @@
 class Socket {
     constructor(path) {
         this.URI = process.env.SOCKET_URI + '/' + path;
+        this.socket = null
+    }
+
+    open() {
         this.socket = new WebSocket(this.URI);
-    }
-
-
-    openSocket() {
         this.socket.onopen = () => {
-            console.log("Socket opened")
+            console.log("Socket connected");
         }
-    }
-
-    sendMessage(message) {
-        this.socket.send(message);
-    }
-
-    receiveMessage(handleData) {
-        this.socket.onmessage = (event) => {
-            handleData(event.data)
-        }
-    }
-
-    closeSocket() {
         this.socket.onclose = () => {
-            console.log('Socket closed');
+            console.log("Socket disconnected");
         }
+
     }
 
-    error() {
-        this.socket.onerror = (event) => {
-            console.log(event);
-        }
-    }
-
-    reconnectSocket() {
-        this.socket.onclose = () => {
-            console.log('Socket closed. Reconnecting...');
+    reconnect(timeout = 5000, maxAttempts = 10) {
+        var attempts = 1;
+        while (this.socket.readyState !== WebSocket.OPEN) {
             setTimeout(() => {
-                this.socket = new WebSocket(this.URI)
-                this.openSocket();
-            }, 1000);
+                console.log("Attempting to reconnect", attempts);
+                this.socket = new WebSocket(this.URI);
+            }, timeout * attempts);
+            attempts++;
+            if (maxAttempts && attempts > maxAttempts) {
+                console.log("Max attempts reached");
+                break;
+            }
         }
+    }
+
+    receive(callback) {
+        this.socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            callback(data);
+
+        }
+    }
+
+    send(message) {
+        if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(message);
+        } else {
+            console.log("Socket not ready");
+        }
+    }
+
+    close() {
+        this.socket.close();
     }
 }
 

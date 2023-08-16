@@ -17,7 +17,7 @@ func main() {
 
 	e = routes.Routes(e, controller)
 
-	go controller.WSMessageChatController.HandleMessages()
+	// go controller.WSMessageChatController.HandleMessages()
 	e.Logger.Info("Server is running on port 8080")
 	e.Logger.Fatal(e.Start(":8080"))
 }
