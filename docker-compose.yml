@@ -17,7 +17,7 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.v1
       target: development
     container_name: client
     restart: always

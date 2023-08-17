@@ -1,72 +1,64 @@
-# ---------------------------------------
-# Development stage
-# ---------------------------------------
-FROM debian:11-slim as development
+# -----------------------------------------------
+# Stage 1: Build dependencies
+# -----------------------------------------------
+FROM node:18-alpine AS deps
 
-# Set environment variables for Node.js installation
-ENV NODE_VERSION 18.x
-ENV NODE_ENV development
+# Install build dependencies
+RUN apk --no-cache add \
+    libc6-compat \
+    wget \
+    ca-certificates
 
-# Install required dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+# Create and set the working directory
+WORKDIR /app
 
-# Download and install Nodejs
-RUN wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
-# Verify Node.js and npm versions
-RUN node -v && npm -v
+# Copy the rest of the application files
+COPY . .
+
+# Install Node.js dependencies
+RUN npm install --omit=dev --production=true
+
+# -----------------------------------------------
+# Stage 2: Build the application
+# -----------------------------------------------
+FROM node:18-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy application to working directory
+# Copy node modules files from the builder stage
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Install dependencies for the client
-RUN npm install
+# Build the application
+RUN NODE_ENV=production npm run build && npm prune --production
 
-CMD npm run dev
-
-# ---------------------------------------
-# Production stage
-# ---------------------------------------
-# Use Debian as the base image
-FROM debian:latest as production
-
-# Set environment variables for Node.js installation
-ENV NODE_VERSION 18.x
-
-# Install required dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
-
-# Download and install Nodejs
-RUN wget -qO- https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Verify Node.js and npm versions
-RUN node -v && npm -v
+# -----------------------------------------------
+# Stage 3: Run the application
+# -----------------------------------------------
+FROM node:18-alpine AS runner
 
 # Set the working directory
 WORKDIR /app
 
-# Copy application to working directory
-COPY . .
+# Set group and user
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Install dependencies for the client
-RUN npm install
+# Copy files from the runner stage
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Build the client
-RUN npm run build
+# Switch to the nextjs user
+USER nextjs
 
-# Command to run the executable
-CMD npm run start
+EXPOSE 3000
+# Set the NODE_ENV environment variable to production
+ENV NEXT_TELEMETRY_DISABLED 1
 
+# Specify the command to run your application
+CMD node server.js
