@@ -2,47 +2,82 @@
   height: 70%;
   width: 70%;
   display: grid;
-  grid-template-columns: 48% 4% 48%;
+  grid-template-columns: 50% 50%;
   border-radius: 10px;
   -webkit-box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px;
 }
 
 .login-left-container {
   height: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-rows: 50% 50%;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px;
+}
+
+.line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #aaa;
+}
+
+.or-text {
+  margin: 0 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.login-avatar {
   display: flex;
   justify-content: center;
-  flex-direction: column;
+  align-items: center;
+  border-radius: 50%;
 }
 
 .login-input {
+  display: grid;
+  padding: 5px 20px;
+  margin: 5px 0px;
+  grid-template-columns: 30% 70%;
+}
+.login-input-rand {
   display: flex;
-  padding: 1rem;
-  margin: 30px 0px;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-avatar-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-input input {
-  width: 80%;
-  padding: 5px 10px;
+  width: 100%;
+  padding: 5px 20px;
+  height: 40px;
   border-radius: 10px;
-  border: 1px solid #333;
+  border: 2px solid rgb(18, 24, 38);
   font-size: 16px;
   outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(18, 24, 38);
 }
 
 .login-right-container {
   height: 100%;
-}
-
-.login-divider-vertical {
-  height: 100%;
-  width: 1px;
-  background-color: #333;
-  margin: 0 20px;
-}
-.login-avatar {
-  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(18, 24, 38);
+  border-radius: 0px 10px 10px 0px;
 }
 
 .button-groups {
@@ -52,27 +87,76 @@
 }
 
 .login-button {
-  width: 45%;
-  padding: 10px;
-  border-radius: 20px;
+  width: 150px;
+  padding: 10px 20px;
   text-align: center;
+  border-radius: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 16px;
+  color: rgb(18, 24, 38);
+  background-color: white;
+  cursor: pointer;
+  line-height: 1rem;
+  border: 3px solid rgb(18, 24, 38);
+  font-weight: 600;
+}
+.login-button > span {
+  margin-left: 5px;
+}
+
+.join-button:hover {
+  background-color: rgb(18, 24, 38);
+  color:white
+}
+.create-button:hover {
+  background-color: rgb(18, 24, 38);
+  color: white;
+}
+
+.oauth-groups {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+}
+
+.oauth-button {
+  width: 90px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
   color: white;
   cursor: pointer;
   line-height: 1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
-.join-button {
-  background-color: #00b300;
-}
-.join-button:hover {
-  background-color: #00cc00;
-}
-.create-button {
+.google-button {
   background-color: #ff4d4d;
 }
-.create-button:hover {
+.google-button:hover {
   background-color: #ff6666;
+}
+.facebook-button {
+  background-color: #1877f2;
+}
+.facebook-button:hover {
+  background-color: #3b5ba2;
+}
+.github-button {
+  background-color: #333333;
+}
+.github-button:hover {
+  background-color: #555555;
+}
+.discord-button {
+  background-color: #7289da;
+}
+.discord-button:hover {
+  background-color: #99aab5;
 }
