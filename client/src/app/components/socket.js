@@ -1,6 +1,6 @@
 class Socket {
     constructor(path) {
-        this.URI = process.env.SOCKET_URI + '/' + path;
+        this.URI = process.env.NEXT_PUBLIC_SOCKET_URI + '/' + path;
         this.socket = null
     }
 
