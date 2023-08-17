@@ -48,10 +48,26 @@ export default function Login() {
             <span className="line"></span>
           </div>
           <div className="oauth-groups">
-            <div className="oauth-button google-button">Google</div>
-            <div className="oauth-button facebook-button">Facebook</div>
-            <div className="oauth-button github-button">Github</div>
-            <div className="oauth-button discord-button">Discord</div>
+            <div className="oauth-button google-button">
+              <a href="google.com">
+                <i className="fab fa-google"></i>
+              </a>
+            </div>
+            <div className="oauth-button facebook-button">
+              <a href="facebook.com">
+                <i className="fab fa-facebook"></i>
+              </a>
+            </div>
+            <div className="oauth-button github-button">
+              <a href="github.com">
+                <i className="fab fa-github"></i>
+              </a>
+            </div>
+            <div className="oauth-button discord-button">
+              <a href="discord.com">
+                <i className="fab fa-discord"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>

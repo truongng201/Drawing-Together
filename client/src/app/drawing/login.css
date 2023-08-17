@@ -97,22 +97,35 @@
   font-size: 16px;
   color: rgb(18, 24, 38);
   background-color: white;
+  border: 3px solid rgb(18, 24, 38);
   cursor: pointer;
   line-height: 1rem;
-  border: 3px solid rgb(18, 24, 38);
   font-weight: 600;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  transition: all 0.2s;
 }
 .login-button > span {
   margin-left: 5px;
 }
 
-.join-button:hover {
-  background-color: rgb(18, 24, 38);
-  color:white
-}
-.create-button:hover {
+.login-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   background-color: rgb(18, 24, 38);
   color: white;
+  transition: all 0.2s;
+}
+
+.login-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.login-button:hover::after {
+  transform: scaleX(1.4) scaleY(1.6);
+  opacity: 0;
 }
 
 .oauth-groups {
@@ -122,19 +135,15 @@
 }
 
 .oauth-button {
-  width: 90px;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 15px;
   color: white;
   cursor: pointer;
   line-height: 1rem;
-  font-weight: bold;
-  margin-bottom: 10px;
 }
 .google-button {
   background-color: #ff4d4d;
