@@ -1,16 +1,12 @@
-'use client'
+'use client';
 
-import Canvas2D from "./canvas2D";
-import Chat from "./chat";
-import Dashboard from "./dashboard";
-import './drawing.css';
+import './drawing.css'
+import Login from './login';
 
 export default function Drawing() {
     return (
         <div className="drawing-container">
-            <Dashboard />
-            <Canvas2D />
-            <Chat />
+            <Login />
         </div>
     )
 }

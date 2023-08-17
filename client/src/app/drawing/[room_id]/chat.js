@@ -1,4 +1,4 @@
-import Socket from '../components/socket';
+import Socket from '../../components/socket';
 import './chat.css';
 
 import { useState, useEffect } from 'react';
