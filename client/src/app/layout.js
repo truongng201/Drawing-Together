@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         </div>
         <div className='right-container flex min-h-screen flex-col'>{children}</div>
       </body>
-      <Script>
+      <Script id='script-width'>
         {`window.innerWidth < 768 && window.location.replace('/404')`}
       </Script>
     </html>
