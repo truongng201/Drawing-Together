@@ -10,7 +10,7 @@ import (
 type WSMessageChatController struct {}
 
 
-func (controller WSMessageChatController) Execute(c echo.Context) error {
+func (controller WSMessageChatController) Execute(c echo.Context, pool *socket.Pool) error {
     ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
     if err != nil {
         return err
@@ -19,9 +19,6 @@ func (controller WSMessageChatController) Execute(c echo.Context) error {
     defer ws.Close()
 
     fmt.Println("Client Message Chat connected:", ws.RemoteAddr())
-
-	pool := socket.NewPool()
-	go pool.Start()
 
 	client := &socket.Client{
 		Conn: ws,

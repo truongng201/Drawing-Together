@@ -23,6 +23,9 @@ class Socket {
                 this.socket = new WebSocket(this.URI);
             }, timeout * attempts);
             attempts++;
+            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                break;
+            }
             if (maxAttempts && attempts > maxAttempts) {
                 console.log("Max attempts reached");
                 break;
@@ -39,10 +42,8 @@ class Socket {
     }
 
     send(message) {
-        if (this.socket.readyState === WebSocket.OPEN) {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(message);
-        } else {
-            console.log("Socket not ready");
         }
     }
 

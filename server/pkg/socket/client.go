@@ -20,10 +20,10 @@ type Message struct {
 }
 
 func (c *Client) Read(){
-	// defer func() {
-	// 	c.Pool.UnRegister <- c
-	// 	c.Conn.Close()
-	// }()
+	defer func() {
+		c.Pool.UnRegister <- c
+		c.Conn.Close()
+	}()
 
 	for {
 		var msg Message
