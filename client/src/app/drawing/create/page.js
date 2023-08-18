@@ -1,17 +1,15 @@
 "use client";
 
-import "./drawing.css";
-import Login from "./login";
+import "../drawing.css";
 import Image from "next/image";
+import CreateComponent from "./create";
 
-export default function Drawing() {
+export default function DrawingCreate() {
   return (
     <div className="drawing-container">
       <div className="drawing-layout">
         <div className="drawing-left-container">
-          <div className="drawing-sub-container">
-            <Login />
-          </div>
+          <CreateComponent />
         </div>
         <div className="drawing-right-container">
           <Image

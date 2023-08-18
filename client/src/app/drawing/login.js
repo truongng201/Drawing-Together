@@ -1,11 +1,12 @@
+import Link from "next/link";
 import "./login.css";
 import Image from "next/image";
 
 export default function Login() {
   return (
     <div className="login-container">
-      <div className="login-left-container">
-        <div className="button-groups">
+      <div className="button-groups">
+        <Link href="/drawing/join">
           <div className="login-button join-button">
             <Image
               className="login-join-icon"
@@ -16,6 +17,9 @@ export default function Login() {
             />
             <span>Join</span>
           </div>
+        </Link>
+
+        <Link href="/drawing/create">
           <div className="login-button create-button">
             <Image
               className="login-create-icon"
@@ -26,59 +30,50 @@ export default function Login() {
             />
             <span>Create</span>
           </div>
-        </div>
-        <div>
-          <div className="login-input">
-            <div className="login-avatar-block">
-              <Image
-                className="login-avatar"
-                alt="rand-avt"
-                src="https://api.dicebear.com/6.x/shapes/svg?backgroundColor=b6e3f4,c0aede,121826"
-                width={80}
-                height={80}
-              />
-            </div>
-            <div className="login-input-rand">
-              <input type="text" placeholder="Username" />
-            </div>
-          </div>
-          <div className="or-divider">
-            <span className="line"></span>
-            <span className="or-text">OR</span>
-            <span className="line"></span>
-          </div>
-          <div className="oauth-groups">
-            <div className="oauth-button google-button">
-              <a href="google.com">
-                <i className="fab fa-google"></i>
-              </a>
-            </div>
-            <div className="oauth-button facebook-button">
-              <a href="facebook.com">
-                <i className="fab fa-facebook"></i>
-              </a>
-            </div>
-            <div className="oauth-button github-button">
-              <a href="github.com">
-                <i className="fab fa-github"></i>
-              </a>
-            </div>
-            <div className="oauth-button discord-button">
-              <a href="discord.com">
-                <i className="fab fa-discord"></i>
-              </a>
-            </div>
-          </div>
-        </div>
+        </Link>
       </div>
-      <div className="login-right-container">
-        <Image
-          className="login-logo"
-          alt="logo"
-          src="/logo/logo-no-background.svg"
-          width={300}
-          height={100}
-        />
+      <div>
+        <div className="login-input">
+          <div className="login-avatar-block">
+            <Image
+              className="login-avatar"
+              alt="rand-avt"
+              src="https://api.dicebear.com/6.x/shapes/svg?backgroundColor=b6e3f4,c0aede,121826"
+              width={80}
+              height={80}
+            />
+          </div>
+          <div className="login-input-rand">
+            <input type="text" placeholder="Username" />
+          </div>
+        </div>
+        <div className="or-divider">
+          <span className="line"></span>
+          <span className="or-text">OR</span>
+          <span className="line"></span>
+        </div>
+        <div className="oauth-groups">
+          <div className="oauth-button google-button">
+            <a href="google.com">
+              <i className="fab fa-google"></i>
+            </a>
+          </div>
+          <div className="oauth-button facebook-button">
+            <a href="facebook.com">
+              <i className="fab fa-facebook"></i>
+            </a>
+          </div>
+          <div className="oauth-button github-button">
+            <a href="github.com">
+              <i className="fab fa-github"></i>
+            </a>
+          </div>
+          <div className="oauth-button discord-button">
+            <a href="discord.com">
+              <i className="fab fa-discord"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
