@@ -34,7 +34,7 @@ export default function JoinComponent() {
             alt="back"
           />
         </Link>
-        <div className="join-title">Let's join a room</div>
+        <div className="join-title">Let&apos;s join a room</div>
       </div>
 
       <div className="join-bottom">

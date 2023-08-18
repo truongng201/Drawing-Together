@@ -16,7 +16,7 @@ export default function CreateComponent() {
             alt="back"
           />
         </Link>
-        <div className="create-title">Let's create new room</div>
+        <div className="create-title">Let&apos;s create new room</div>
       </div>
       <div className="create-bottom">
         <div className="create-settings">
