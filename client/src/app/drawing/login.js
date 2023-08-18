@@ -1,12 +1,27 @@
 import Link from "next/link";
 import "./login.css";
 import Image from "next/image";
+import { useState } from "react";
+import AlertComponent from "../components/alert";
 
 export default function Login() {
+  const [errorUsername, setErrorUsername] = useState(false);
+  const [username, setUsername] = useState(
+    `Alpha${Math.floor(Math.random() * 100000)}`
+  );
+  const checkUsername = (e) => {
+    if (username === "") {
+      e.preventDefault();
+      setErrorUsername(true);
+      setTimeout(() => {
+        setErrorUsername(false);
+      }, 5000);
+    }
+  };
   return (
     <div className="login-container">
       <div className="button-groups">
-        <Link href="/drawing/join">
+        <Link href="/drawing/join" onClick={checkUsername}>
           <div className="login-button join-button">
             <Image
               className="login-join-icon"
@@ -19,7 +34,7 @@ export default function Login() {
           </div>
         </Link>
 
-        <Link href="/drawing/create">
+        <Link href="/drawing/create" onClick={checkUsername}>
           <div className="login-button create-button">
             <Image
               className="login-create-icon"
@@ -44,7 +59,12 @@ export default function Login() {
             />
           </div>
           <div className="login-input-rand">
-            <input type="text" placeholder="Username" />
+            <input
+              type="text"
+              placeholder="Username"
+              defaultValue={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
         </div>
         <div className="or-divider">
@@ -75,6 +95,14 @@ export default function Login() {
           </div>
         </div>
       </div>
+      {errorUsername && (
+        <AlertComponent
+          close={() => {
+            setErrorUsername(false);
+          }}
+          message="Username is required"
+        />
+      )}
     </div>
   );
 }
