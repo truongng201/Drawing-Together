@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"server/pkg/socket"
+	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
 )
@@ -11,7 +11,7 @@ type WSMessageChatController struct {}
 
 
 func (controller WSMessageChatController) Execute(c echo.Context, pool *socket.Pool) error {
-    ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
     if err != nil {
         return err
     }
