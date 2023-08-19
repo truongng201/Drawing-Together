@@ -1,7 +1,8 @@
 package controller
 
 type AppController struct {
-	HealthCheckController HealthCheckController
-	WSMessageGuessController WSMessageGuessController
-	WSMessageChatController WSMessageChatController
+	HealthCheckController 		HealthCheckController
+	GetUsersController 		GetUsersController
+	WSMessageGuessController 	WSMessageGuessController
+	WSMessageChatController 	WSMessageChatController
 }
