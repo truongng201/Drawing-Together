@@ -34,11 +34,12 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    volumes:
-      - ./db:/var/lib/postgresql/data
+    # volumes:
+    #   - ./db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=alpha-db
 
   pgadmin:
     image: dpage/pgadmin4:7.0
@@ -63,9 +64,9 @@ services:
       - BACKEND_URL=localhost2
 
 volumes:
-  pgadmin:
-    name: pgadmin
-    driver: local
+  # pgadmin:
+  #   name: pgadmin
+  #   driver: local
   database:
     name: database
     driver: local

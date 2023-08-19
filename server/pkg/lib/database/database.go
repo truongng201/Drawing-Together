@@ -34,7 +34,7 @@ func (database Database) Connect() *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.User{}, &model.Room{})
 	fmt.Println("Database connected")
 	return db
 }
