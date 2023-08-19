@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"server/pkg/socket"
+	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
 )

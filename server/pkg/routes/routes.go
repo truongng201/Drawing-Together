@@ -2,7 +2,7 @@ package routes
 
 import (
 	"server/pkg/controller"
-    "server/pkg/socket"
+	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
