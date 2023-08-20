@@ -10,7 +10,7 @@ export default function Chat() {
   //setup websocket
   // const wsGuess = new Socket("messagesGuess");
 
-  const wsChat = new Socket("messagesChat");
+  const wsChat = new Socket("room");
   useEffect(() => {
     wsChat.open();
     wsChat.receive((data) => {

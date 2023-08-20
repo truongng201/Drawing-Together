@@ -1,55 +1,55 @@
 package socket
 
 type WsServer struct {
-	clients   	map[*Client]bool
-	register   	chan *Client
-	unregister 	chan *Client
-	broadcast  	chan []byte
-	rooms      	map[*Room]bool
+	Clients   	map[*Client]bool
+	Register   	chan *Client
+	Unregister 	chan *Client
+	Broadcast  	chan []byte
+	Rooms      	map[*Room]bool
 }
 
 func NewWsServer() *WsServer {
 	return &WsServer{
-		clients		:   make(map[*Client]bool),
-		register	:   make(chan *Client),
-		unregister	: 	make(chan *Client),
-		broadcast	:  	make(chan []byte),
-		rooms		:   make(map[*Room]bool),
+		Clients		:   make(map[*Client]bool),
+		Register	:   make(chan *Client),
+		Unregister	: 	make(chan *Client),
+		Broadcast	:  	make(chan []byte),
+		Rooms		:   make(map[*Room]bool),
 	}
 }
 
 func (wsServer *WsServer) Start() {
 	for {
 		select {
-		case client := <-wsServer.register:
+		case client := <-wsServer.Register:
 			wsServer.registerClient(client)
-		case client := <-wsServer.unregister:
+		case client := <-wsServer.Unregister:
 			wsServer.unregisterClient(client)
-		case message := <-wsServer.broadcast:
+		case message := <-wsServer.Broadcast:
 			wsServer.broadcastToClients(message)
 		}
 	}
 }
 
 func (wsServer *WsServer) registerClient(client *Client)  {
-	wsServer.clients[client] = true
+	wsServer.Clients[client] = true
 }
 
 func (wsServer *WsServer) unregisterClient(client *Client) {
-	if _, ok := wsServer.clients[client]; ok {
-		delete(wsServer.clients, client)
+	if _, ok := wsServer.Clients[client]; ok {
+		delete(wsServer.Clients, client)
 	}
 }
 
 func (wsServer *WsServer) broadcastToClients(message []byte) {
-	for client := range wsServer.clients {
+	for client := range wsServer.Clients {
 		client.send <- message
 	}
 }
 
 func (wsServer *WsServer) FindRoomByID(roomID string) *Room {
 	var foundRoom *Room
-	for room := range wsServer.rooms {
+	for room := range wsServer.Rooms {
 		if room.GetRoomID() == roomID {
 			foundRoom = room
 			break
@@ -59,9 +59,9 @@ func (wsServer *WsServer) FindRoomByID(roomID string) *Room {
 }
 
 
-func (wsServer *WsServer) CeateRoom(private bool, maxPlayers int) *Room {
+func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int) *Room {
 	room := NewRoom(private, maxPlayers)
 	go room.Start()
-	wsServer.rooms[room] = true
+	wsServer.Rooms[room] = true
 	return room
 }

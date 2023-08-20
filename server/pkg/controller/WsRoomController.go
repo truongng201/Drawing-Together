@@ -20,10 +20,14 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 
     fmt.Println("Client Message Chat connected:", conn.RemoteAddr())
 
-	client := &socket.Client{
-		Conn: conn,
-		ClientName: "test",
-	}
 
+	client := socket.NewClient(
+		conn, "Test User", wsServer,
+	)
+
+	go client.ReadMessage()
+	go client.WriteMessage()
+
+	wsServer.Register<- client
 	return nil
 }

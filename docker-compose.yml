@@ -62,10 +62,10 @@ services:
       - FRONTEND_URL=localhost1
       - BACKEND_URL=localhost2
 
-volumes:
-  pgadmin:
-    name: pgadmin
-    driver: local
-  database:
-    name: database
-    driver: local
+# volumes:
+#   pgadmin:
+#     name: pgadmin
+#     driver: local
+#   database:
+#     name: database
+#     driver: local
