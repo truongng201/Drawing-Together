@@ -9,7 +9,7 @@ import (
 )
 
 type Client struct {
-	ClientID   	uuid.UUID		`json:"client_id"`
+	ClientID   	string		`json:"client_id"`
 	ClientName 	string			`json:"client_name"`
 	Conn 		*websocket.Conn
 	WsServer 	*WsServer
@@ -19,7 +19,7 @@ type Client struct {
 
 func NewClient(Conn *websocket.Conn, clientName string, WsServer *WsServer) *Client {
 	return &Client{
-		ClientID	:   uuid.New(),
+		ClientID	:   uuid.New().String(),
 		ClientName  : 	clientName,
 		Conn		: 	Conn,
 		WsServer	: 	WsServer,
@@ -54,20 +54,21 @@ func (client *Client) ReadMessage() {
 
 
 func (client *Client) handleNewMessage(jsonMessage []byte) {
-	var message Message
+	var message MessageBody
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
 		fmt.Println("client.handleNewMessage.err", err)
 		return
 	}
+	fmt.Println("client.handleNewMessage.message", message)
 
-	message.Sender = client
+	// message.Sender = *client
 
 	switch message.Action {
-	case SendMessageAction:
-		roomID := message.Target.RoomID.String()
-		if room := client.WsServer.FindRoomByID(roomID); room != nil {
-			room.Broadcast <- message
-		}
+	// case SendMessageAction:
+	// 	roomID := message.Target.RoomID
+	// 	if room := client.WsServer.FindRoomByID(roomID); room != nil {
+	// 		room.Broadcast <- message
+	// 	}
 	case JoinRoomAction:
 		client.handleJoinRoomMessage(message)
 	}
@@ -90,14 +91,19 @@ func (client *Client) WriteMessage() {
 	}
 }
 
-func(client *Client) handleJoinRoomMessage(message Message) {
-	roomID := message.Target.RoomID.String()
+func(client *Client) handleJoinRoomMessage(message MessageBody) {
+	fmt.Println("client.handleJoinRoomMessage.message", message)
+	roomID := message.Target.RoomID
+	fmt.Println("client.handleJoinRoomMessage.roomID", roomID)
 	room := client.WsServer.FindRoomByID(roomID);
+	fmt.Println("client.handleJoinRoomMessage.room", room)
 	if room == nil {
-		room := NewRoom(false, 5)
+		room = NewRoom(false, 5)
 		client.WsServer.Rooms[room] = true
-		
+		go room.Start()
+		fmt.Println("client.handleJoinRoomMessage.room", room.GetRoomID())
 	}
 	client.rooms[room] = true
+	fmt.Println("client.handleJoinRoomMessage.client", client.ClientID)
 	room.Register <- client
 }

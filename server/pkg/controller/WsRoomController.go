@@ -25,8 +25,8 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 		conn, "Test User", wsServer,
 	)
 
-	go client.ReadMessage()
-	go client.WriteMessage()
+	client.ReadMessage()
+	client.WriteMessage()
 
 	wsServer.Register<- client
 	return nil

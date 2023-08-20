@@ -9,7 +9,7 @@ import (
 // Room is a pool of connections
 type Room struct {
 	// Registered connections.
-	RoomID	  	uuid.UUID		`json:"room_id"`
+	RoomID	  	string		`json:"room_id"`
 	Private		bool			`json:"private"`
 	MaxPlayers	int				`json:"max_players"`
 	Register    chan *Client
@@ -20,7 +20,7 @@ type Room struct {
 
 func NewRoom(private bool, maxPlayers int) *Room {
 	return &Room{
-		RoomID: 	 uuid.New(),
+		RoomID: 	 uuid.New().String(),
 		Private:	 private,
 		MaxPlayers:  maxPlayers,
 		Register:    make(chan *Client),
@@ -38,7 +38,7 @@ func (room *Room) Start() {
 		case client := <-room.UnRegister:
 			room.unregisterClient(client)
 		case message := <-room.Broadcast:	
-			room.broadcastMessage(message.encode())
+			room.broadcastMessage(message)
 		}
 	}
 }
@@ -60,7 +60,7 @@ func (room *Room) unregisterClient(client *Client) {
 	fmt.Println("A user left the chat")
 }
 
-func (room *Room) broadcastMessage(message []byte) {
+func (room *Room) broadcastMessage(message Message) {
 	fmt.Println("Sending message to all clients in Room")
 	for client := range room.Clients {
 		if err := client.Conn.WriteJSON(message); err != nil {
@@ -71,5 +71,5 @@ func (room *Room) broadcastMessage(message []byte) {
 }
 
 func (room *Room) GetRoomID() string {
-	return room.RoomID.String()
+	return room.RoomID
 }
