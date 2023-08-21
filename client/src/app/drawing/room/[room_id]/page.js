@@ -6,9 +6,11 @@ import Chat from "./chat";
 import Dashboard from "./dashboard";
 import { useSearchParams } from "next/navigation";
 import Socket from "@/app/components/socket";
+import { useState } from "react";
 
 export default function Room({ params }) {
   const searchParams = useSearchParams();
+  const [listClient, setListClient] = useState([]); // [{client_name, client_id, avatar_url}
 
   const ws = new Socket("room");
   const username = sessionStorage.getItem("username");
@@ -61,7 +63,7 @@ export default function Room({ params }) {
 
   return (
     <div className="room-container">
-      <Dashboard />
+      <Dashboard listClient={listClient} />
       <Canvas2D />
       <Chat />
     </div>

@@ -1,5 +1,60 @@
-.dashboard{
-    -webkit-box-shadow: 0px 0px 16px 5px rgba(0,0,0,0.20); 
-    box-shadow: 0px 0px 16px 5px rgba(0,0,0,0.10);
-    border-radius: 10px;
+.dashboard {
+  -webkit-box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.player-dashboard {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #d8d8d8;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.player-dashboard:last-child {
+  border-bottom: none;
+}
+
+.player-avatar {
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.player-name {
+  font-size: 1.2rem;
+  color: #161616;
+  font-weight: 500;
+  font-family: "Inter", sans-serif;
+}
+
+.dashboard::-webkit-scrollbar {
+  width: 10px;
+}
+
+.dashboard::-webkit-scrollbar-track {
+  background: white;
+}
+
+.dashboard::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 5px;
+}
+
+.dashboard-players{
+    height: 100%;
+}
+
+.no-player {
+  font-size: 1.2rem;
+  color: #161616;
+  font-weight: 500;
+  font-family: "Inter", sans-serif;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
