@@ -24,7 +24,7 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 
 
 	client := socket.NewClient(
-		conn, "", wsServer,
+		conn, "", "", wsServer,
 	)
 
 	go client.WriteMessage()

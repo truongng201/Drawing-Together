@@ -6,6 +6,7 @@ import AlertComponent from "../components/alert";
 
 export default function Login() {
   const [errorUsername, setErrorUsername] = useState(false);
+  const [username, setUsername] = useState("");
   const checkUsername = (e) => {
     if (sessionStorage.getItem("username") === "") {
       e.preventDefault();
@@ -24,6 +25,7 @@ export default function Login() {
       const username = `Alpha${Math.floor(Math.random() * 100000)}`;
       sessionStorage.setItem("username", username);
     }
+    setUsername(sessionStorage.getItem("username"));
   }, []);
 
   return (
@@ -61,7 +63,7 @@ export default function Login() {
             <Image
               className="login-avatar"
               alt="rand-avt"
-              src="https://api.dicebear.com/6.x/shapes/svg?backgroundColor=b6e3f4,c0aede,121826"
+              src={`https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${username}`}
               width={80}
               height={80}
             />
@@ -70,8 +72,9 @@ export default function Login() {
             <input
               type="text"
               placeholder="Username"
-              defaultValue={sessionStorage.getItem("username")}
+              defaultValue={username}
               onChange={(e) => {
+                setUsername(e.target.value);
                 sessionStorage.setItem("username", e.target.value);
               }}
             />

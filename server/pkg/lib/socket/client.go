@@ -9,18 +9,20 @@ import (
 )
 
 type Client struct {
-	ClientID   	string		`json:"client_id"`
+	ClientID   	string			`json:"client_id"`
 	ClientName 	string			`json:"client_name"`
+	AvatarUrl 	string			`json:"avatar_url"`
 	Conn 		*websocket.Conn
 	WsServer 	*WsServer
 	rooms 		map[*Room]bool
 	send 		chan []byte
 }
 
-func NewClient(Conn *websocket.Conn, clientName string, WsServer *WsServer) *Client {
+func NewClient(Conn *websocket.Conn, clientName string, avatarUrl string, WsServer *WsServer) *Client {
 	return &Client{
 		ClientID	:   uuid.New().String(),
 		ClientName  : 	clientName,
+		AvatarUrl	: 	avatarUrl,
 		Conn		: 	Conn,
 		WsServer	: 	WsServer,
 		rooms		: 	make(map[*Room]bool),
@@ -56,7 +58,6 @@ func (client *Client) ReadMessage() {
 
 func (client *Client) handleNewMessage(jsonMessage []byte) {
 	var message Message
-	log.Info(jsonMessage)
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
 		log.Error(err)
 		return
@@ -67,17 +68,15 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		return
 	}
 	client.ClientName = message.Sender.ClientName
+	client.AvatarUrl = message.Sender.AvatarUrl
 
 	switch message.Action {
-	// case ChatAction:
-	// 	roomID := message.Target.RoomID
-	// 	if room := client.WsServer.FindRoomByID(roomID); room != nil {
-	// 		room.Broadcast <- message
-	// 	}
+	case ChatAction:
+		client.handleChatAction(message)
 	case JoinRoomAction:
-		client.handleJoinRoomMessage(message)
+		client.handleJoinRoomAction(message)
 	case CreateRoomAction:
-		client.handleCreateRoomMessage(message)
+		client.handleCreateRoomAction(message)
 	}
 }
 
@@ -90,7 +89,6 @@ func (client *Client) WriteMessage() {
 	for {
 		select {
 		case message := <-client.send:
-			log.Info( message)
 			var msg Message
 			if err := json.Unmarshal(message, &msg); err != nil{
 				log.Error(err)
@@ -105,13 +103,11 @@ func (client *Client) WriteMessage() {
 }
 
 
-func(client *Client) handleJoinRoomMessage(message Message) {
+func(client *Client) handleJoinRoomAction(message Message) {
 	roomID := message.Target.RoomID
-	log.Info(roomID)
 	room := client.WsServer.FindRoomByID(roomID);
-	log.Info(room)
 	if room == nil {
-		log.Error("room not found")
+		log.Error("Room not found")
 		return
 	}
 	client.rooms[room] = true
@@ -121,20 +117,22 @@ func(client *Client) handleJoinRoomMessage(message Message) {
 		Action: JoinRoomAction,
 		Target: MessageRoom{
 			RoomID: room.RoomID,
+			MaxPlayers: room.MaxPlayers,
+			Private: room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
+			ClientID: client.ClientID,
+			AvatarUrl: client.AvatarUrl,
 		},
-		Payload: "Room joined",
+		Payload: "A new user has joined the room",
 	}
 	
 }
 
 
-func(client *Client) handleCreateRoomMessage(message Message) {
-	room := NewRoom(message.Target.Private, message.Target.MaxPlayers)
-	client.WsServer.Rooms[room] = true
-	go room.Start()
+func(client *Client) handleCreateRoomAction(message Message) {
+	room := client.WsServer.CreateRoom( message.Target.Private, message.Target.MaxPlayers)
 	client.rooms[room] = true
 	room.Register <- client
 	room.Broadcast <- Message{
@@ -147,7 +145,32 @@ func(client *Client) handleCreateRoomMessage(message Message) {
 		Sender: MessageClient{
 			ClientName: client.ClientName,
 			ClientID: client.ClientID,
+			AvatarUrl: client.AvatarUrl,
 		},
-		Payload: "Room created",
+		Payload: "Room created successfully",
+	}
+}
+
+func(client *Client) handleChatAction(message Message){
+	roomID := message.Target.RoomID
+	room := client.WsServer.FindRoomByID(roomID)
+	if room == nil{
+		log.Error("Room not found")
+		return
+	}
+
+	room.Broadcast <- Message{
+		Action: ChatAction,
+		Target: MessageRoom{
+			RoomID: room.RoomID,
+			MaxPlayers: room.MaxPlayers,
+			Private: room.Private,
+		},
+		Sender: MessageClient{
+			ClientName: client.ClientName,
+			ClientID: client.ClientID,
+			AvatarUrl: client.AvatarUrl,
+		},
+		Payload: message.Payload,
 	}
 }

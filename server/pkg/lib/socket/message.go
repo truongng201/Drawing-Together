@@ -22,6 +22,7 @@ type Message struct {
 type MessageClient struct {
 	ClientName string `json:"client_name"`
 	ClientID   string `json:"client_id"`
+	AvatarUrl  string `json:"avatar_url"`
 }
 
 type MessageRoom struct {

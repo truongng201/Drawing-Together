@@ -17,7 +17,7 @@ export default function JoinComponent() {
           setErrorRoomId(false);
         }, 10000);
       } else {
-        push(`/drawing/room/${roomId}`);
+        push(`/drawing/room/${roomId}?action=join`);
       }
     }
   };

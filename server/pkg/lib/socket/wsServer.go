@@ -1,5 +1,9 @@
 package socket
 
+import (
+	"github.com/labstack/gommon/log"
+)
+
 type WsServer struct {
 	Clients   	map[*Client]bool
 	Register   	chan *Client
@@ -63,5 +67,7 @@ func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int) *Room {
 	room := NewRoom(private, maxPlayers)
 	go room.Start()
 	wsServer.Rooms[room] = true
+	log.Info("Room created with ID: ", room.GetRoomID())
+	log.Info("Number of rooms created: ", len(wsServer.Rooms))
 	return room
 }
