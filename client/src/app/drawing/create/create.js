@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import "./create.css";
 // import DropdownComponent from "@/app/components/dropdown";
-import Socket from "@/app/components/socket";
 import { useRouter } from "next/navigation";
+import { customAlphabet } from "nanoid";
 
 export default function CreateComponent() {
   const { push } = useRouter();
@@ -15,31 +15,9 @@ export default function CreateComponent() {
         `Alpha${Math.floor(Math.random() * 100000)}`
       );
     }
-    const wsSocket = new Socket("room");
-    wsSocket.open();
-
-    setTimeout(() => {
-      wsSocket.send(
-        JSON.stringify({
-          action: "create-room",
-          payload: "create-room",
-          sender: {
-            client_name: sessionStorage.getItem("username"),
-            client_id: "",
-          },
-          target: {
-            room_id: "",
-            max_players: 10,
-            private: true,
-          },
-        })
-      );
-    }, 3000);
-    wsSocket.receive((data) => {
-      if (data.target?.room_id !== "" || data.target?.room_id !== undefined) {
-        push(`/drawing/room/${data.target?.room_id}`);
-      }
-    });
+    const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
+    const room_id = nanoid(10);
+    push(`/drawing/room/${room_id}?action=create`);
   };
   return (
     <div className="create-container">
