@@ -61,7 +61,6 @@ services:
     environment:
       - FRONTEND_URL=localhost1
       - BACKEND_URL=localhost2
-
 # volumes:
 #   pgadmin:
 #     name: pgadmin
@@ -69,3 +68,4 @@ services:
 #   database:
 #     name: database
 #     driver: local
+
