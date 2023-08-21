@@ -1,13 +1,43 @@
 import "./chat.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Chat({ ws }) {
+export default function Chat({ ws, room_id }) {
   const [messagesChat, setMessagesChat] = useState([]);
   const [messagesGuess, setMessagesGuess] = useState([]);
+  const username = sessionStorage.getItem("username");
+  const avatar_url = `https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${username}`;
+
+  useEffect(() => {
+    ws.receive((data) => {
+      if (data?.action === "chat") {
+        setMessagesChat((messagesChat) => [
+          ...messagesChat,
+          {
+            username: data?.sender?.client_name,
+            content: data?.payload,
+          },
+        ]);
+      }
+    });
+  }, [ws]);
 
   const sendMessage = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
       if (event.target.placeholder === "Chat here") {
+        ws.send({
+          action: "chat",
+          payload: event.target.value,
+          sender: {
+            client_name: username,
+            client_id: "",
+            avatar_url: avatar_url,
+          },
+          target: {
+            room_id: room_id,
+            max_players: 10,
+            private: false,
+          },
+        });
         event.target.value = "";
       } else if (event.target.placeholder === "Guess here") {
         event.target.value = "";

@@ -39,14 +39,12 @@ func (client *Client) disconnect() {
 	client.Conn.Close()
 }
 
-
 func (client *Client) ReadMessage() {
 	defer func() {
 		client.disconnect()
 	}()
 	for {
 		_, message, err := client.Conn.ReadMessage()
-		log.Info(message)
 		if err != nil {
 			log.Error(err)
 			return
@@ -72,6 +70,7 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 	switch message.Action {
 	case ChatAction:
+		log.Info("Chat action")
 		client.handleChatAction(message)
 	case JoinRoomAction:
 		client.handleJoinRoomAction(message)
@@ -132,7 +131,7 @@ func(client *Client) handleJoinRoomAction(message Message) {
 
 
 func(client *Client) handleCreateRoomAction(message Message) {
-	room := client.WsServer.CreateRoom( message.Target.Private, message.Target.MaxPlayers)
+	room := client.WsServer.CreateRoom( message.Target.Private, message.Target.MaxPlayers, message.Target.RoomID)
 	client.rooms[room] = true
 	room.Register <- client
 	room.Broadcast <- Message{

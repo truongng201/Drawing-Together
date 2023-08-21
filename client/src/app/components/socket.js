@@ -41,7 +41,6 @@ class Socket {
 
   send(message) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      console.log("Sending message", message);
       this.socket.send(JSON.stringify(message));
     }
   }

@@ -54,7 +54,7 @@ func (wsServer *WsServer) broadcastToClients(message []byte) {
 func (wsServer *WsServer) FindRoomByID(roomID string) *Room {
 	var foundRoom *Room
 	for room := range wsServer.Rooms {
-		if room.GetRoomID() == roomID {
+		if room.RoomID == roomID {
 			foundRoom = room
 			break
 		}
@@ -62,12 +62,23 @@ func (wsServer *WsServer) FindRoomByID(roomID string) *Room {
 	return foundRoom	
 }
 
+func (WsServer *WsServer) FindClientByID(clientID string) *Client{
+	var foundClient *Client
+	for client := range WsServer.Clients {
+		if client.ClientID == clientID {
+			foundClient = client
+			break
+		}
+	}
+	return foundClient
+}
 
-func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int) *Room {
-	room := NewRoom(private, maxPlayers)
+
+func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int, roomID string) *Room {
+	room := NewRoom(private, maxPlayers, roomID)
 	go room.Start()
 	wsServer.Rooms[room] = true
-	log.Info("Room created with ID: ", room.GetRoomID())
+	log.Info("Room created with ID: ", room.RoomID)
 	log.Info("Number of rooms created: ", len(wsServer.Rooms))
 	return room
 }

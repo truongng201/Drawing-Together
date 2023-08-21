@@ -2,8 +2,6 @@ package socket
 
 import (
 	"github.com/labstack/gommon/log"
-
-	"github.com/google/uuid"
 )
 
 // Room is a pool of connections
@@ -18,9 +16,9 @@ type Room struct {
 	Broadcast   chan Message
 }
 
-func NewRoom(private bool, maxPlayers int) *Room {
+func NewRoom(private bool, maxPlayers int, roomID string) *Room {
 	return &Room{
-		RoomID: 	 uuid.New().String(),
+		RoomID: 	 roomID,
 		Private:	 private,
 		MaxPlayers:  maxPlayers,
 		Register:    make(chan *Client),
@@ -69,8 +67,4 @@ func (room *Room) broadcastMessage(message []byte) {
 	for client := range room.Clients {
 		client.send <- message
 	}
-}
-
-func (room *Room) GetRoomID() string {
-	return room.RoomID
 }
