@@ -2,7 +2,6 @@ package socket
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -45,8 +44,9 @@ func (client *Client) ReadMessage() {
 	}()
 	for {
 		_, message, err := client.Conn.ReadMessage()
+		log.Info(message)
 		if err != nil {
-			log.Error("client.ReadMessage.err", err)
+			log.Error(err)
 			return
 		}
 		client.handleNewMessage(message)
@@ -55,14 +55,15 @@ func (client *Client) ReadMessage() {
 
 
 func (client *Client) handleNewMessage(jsonMessage []byte) {
-	var message MessageRequest
+	var message Message
+	log.Info(jsonMessage)
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
-		log.Error("client.handleNewMessage.err", err)
+		log.Error(err)
 		return
 	}
 
 	if message.Sender.ClientName == "" {
-		log.Error("client.handleNewMessage.err", "client name is empty")
+		log.Error("Client name is empty")
 		return
 	}
 	client.ClientName = message.Sender.ClientName
@@ -88,47 +89,65 @@ func (client *Client) WriteMessage() {
 	
 	for {
 		select {
-		case message, ok := <-client.send:
-			if !ok {
-				client.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+		case message := <-client.send:
+			log.Info( message)
+			var msg Message
+			if err := json.Unmarshal(message, &msg); err != nil{
+				log.Error(err)
+				return  
+			}
+			if err := client.Conn.WriteJSON(msg); err != nil{
+				log.Error(err)
 				return
 			}
-			client.Conn.WriteMessage(websocket.TextMessage, message)
 		}
 	}
 }
 
 
-func(client *Client) handleJoinRoomMessage(message MessageRequest) {
+func(client *Client) handleJoinRoomMessage(message Message) {
 	roomID := message.Target.RoomID
-	fmt.Println("client.handleJoinRoomMessage.roomID", roomID)
+	log.Info(roomID)
 	room := client.WsServer.FindRoomByID(roomID);
-	fmt.Println("client.handleJoinRoomMessage.room", room)
+	log.Info(room)
 	if room == nil {
-		room = NewRoom(false, 5)
-		client.WsServer.Rooms[room] = true
-		go room.Start()
-		fmt.Println("client.handleJoinRoomMessage.room", room.GetRoomID())
+		log.Error("room not found")
+		return
 	}
 	client.rooms[room] = true
-	fmt.Println("client.handleJoinRoomMessage.client", client.ClientID)
+	log.Info(client.ClientID)
 	room.Register <- client
 	room.Broadcast <- Message{
-
+		Action: JoinRoomAction,
+		Target: MessageRoom{
+			RoomID: room.RoomID,
+		},
+		Sender: MessageClient{
+			ClientName: client.ClientName,
+		},
+		Payload: "Room joined",
 	}
+	
 }
 
 
-func(client *Client) handleCreateRoomMessage(message MessageRequest) {
-	room := NewRoom(false, 5)
+func(client *Client) handleCreateRoomMessage(message Message) {
+	room := NewRoom(message.Target.Private, message.Target.MaxPlayers)
 	client.WsServer.Rooms[room] = true
 	go room.Start()
 	client.rooms[room] = true
 	room.Register <- client
 	room.Broadcast <- Message{
 		Action: CreateRoomAction,
-		Target: room,
-		Sender: client,
-		Message: "Room created",
+		Target: MessageRoom{
+			RoomID: room.RoomID,
+			MaxPlayers: room.MaxPlayers,
+			Private: room.Private,
+		},
+		Sender: MessageClient{
+			ClientName: client.ClientName,
+			ClientID: client.ClientID,
+		},
+		Payload: "Room created",
 	}
 }

@@ -1,10 +1,11 @@
 package socket
 
 import (
-	"fmt"
+	"encoding/json"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/google/uuid"
-	"github.com/labstack/gommon/log"
 )
 
 // Room is a pool of connections
@@ -46,12 +47,12 @@ func (room *Room) Start() {
 
 func (room *Room) registerClient(client *Client)  {
 	if len(room.Clients) >= room.MaxPlayers {
-		fmt.Println("Room is full")
+		log.Info("Room is full")
 	} else{
 		room.Clients[client] = true
-		fmt.Println("Size of Connection Room: ", len(room.Clients), "Max Players: ", room.MaxPlayers)
+		log.Info("Size of Connection Room: ", len(room.Clients))
 		if len(room.Clients) > 1 {
-			fmt.Println("A new user has joined the chat")
+			log.Info("A new user has joined the chat")
 		}
 	}
 	
@@ -59,17 +60,19 @@ func (room *Room) registerClient(client *Client)  {
 
 func (room *Room) unregisterClient(client *Client) {
 	delete(room.Clients, client)
-	fmt.Println("Size of Connection Room: ", len(room.Clients))
-	fmt.Println("A user left the chat")
+	log.Info("Size of Connection Room: ", len(room.Clients))
+	log.Info("A user left the chat")
 }
 
 func (room *Room) broadcastMessage(message Message) {
-	fmt.Println("Sending message to all clients in Room")
+	log.Info("room.broadcastMessage.len_rooom: ", len(room.Clients))
 	for client := range room.Clients {
-		if err := client.Conn.WriteJSON(message); err != nil {
+		log.Info("room.broadcastMessage.msg", client)
+		msg, err := json.Marshal(message)
+		if err != nil{
 			log.Error("room.broadcastMessage.err", err)
-			return
 		}
+		client.send <- msg
 	}
 }
 

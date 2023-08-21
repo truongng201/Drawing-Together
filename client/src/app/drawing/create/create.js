@@ -3,8 +3,11 @@ import Image from "next/image";
 import "./create.css";
 // import DropdownComponent from "@/app/components/dropdown";
 import Socket from "@/app/components/socket";
+import { useRouter } from "next/navigation";
 
 export default function CreateComponent() {
+  const { push } = useRouter();
+
   const handleCreateRoom = () => {
     if (sessionStorage.getItem("username") === "") {
       sessionStorage.setItem(
@@ -14,14 +17,28 @@ export default function CreateComponent() {
     }
     const wsSocket = new Socket("room");
     wsSocket.open();
-    wsSocket.send({
-      action: "create-room",
-      sender: { client_name: sessionStorage.getItem("username") },
-      target: { room_id: "", max_players: 10, private: false },
-      payload: "",
-    });
+
+    setTimeout(() => {
+      wsSocket.send(
+        JSON.stringify({
+          action: "create-room",
+          payload: "create-room",
+          sender: {
+            client_name: sessionStorage.getItem("username"),
+            client_id: "",
+          },
+          target: {
+            room_id: "",
+            max_players: 10,
+            private: true,
+          },
+        })
+      );
+    }, 3000);
     wsSocket.receive((data) => {
-      console.log(data);
+      if (data.target?.room_id !== "" || data.target?.room_id !== undefined) {
+        push(`/drawing/room/${data.target?.room_id}`);
+      }
     });
   };
   return (

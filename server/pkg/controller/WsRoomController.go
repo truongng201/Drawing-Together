@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type WsRoomController struct {}
@@ -20,15 +20,15 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 
     defer conn.Close()
 
-    fmt.Println("Client Message Chat connected:", conn.RemoteAddr())
+    log.Info("Client address: ",conn.RemoteAddr())
 
 
 	client := socket.NewClient(
 		conn, "", wsServer,
 	)
 
+	go client.WriteMessage()
 	client.ReadMessage()
-	client.WriteMessage()
 
 	wsServer.Register<- client
 	return nil
