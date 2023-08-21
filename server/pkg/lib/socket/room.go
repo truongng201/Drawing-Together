@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/labstack/gommon/log"
 )
 
 // Room is a pool of connections
@@ -48,8 +49,10 @@ func (room *Room) registerClient(client *Client)  {
 		fmt.Println("Room is full")
 	} else{
 		room.Clients[client] = true
-		fmt.Println("Size of Connection Room: ", len(room.Clients))
-		fmt.Println("A new user joined the chat")
+		fmt.Println("Size of Connection Room: ", len(room.Clients), "Max Players: ", room.MaxPlayers)
+		if len(room.Clients) > 1 {
+			fmt.Println("A new user has joined the chat")
+		}
 	}
 	
 }
@@ -64,7 +67,7 @@ func (room *Room) broadcastMessage(message Message) {
 	fmt.Println("Sending message to all clients in Room")
 	for client := range room.Clients {
 		if err := client.Conn.WriteJSON(message); err != nil {
-			fmt.Println(err)
+			log.Error("room.broadcastMessage.err", err)
 			return
 		}
 	}

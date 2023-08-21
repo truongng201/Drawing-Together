@@ -1,16 +1,13 @@
 import Link from "next/link";
 import "./login.css";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AlertComponent from "../components/alert";
 
 export default function Login() {
   const [errorUsername, setErrorUsername] = useState(false);
-  const [username, setUsername] = useState(
-    `Alpha${Math.floor(Math.random() * 100000)}`
-  );
   const checkUsername = (e) => {
-    if (username === "") {
+    if (sessionStorage.getItem("username") === "") {
       e.preventDefault();
       setErrorUsername(true);
       setTimeout(() => {
@@ -18,6 +15,17 @@ export default function Login() {
       }, 5000);
     }
   };
+
+  useEffect(() => {
+    if (
+      sessionStorage.getItem("username") === null ||
+      sessionStorage.getItem("username") === ""
+    ) {
+      const username = `Alpha${Math.floor(Math.random() * 100000)}`;
+      sessionStorage.setItem("username", username);
+    }
+  }, []);
+
   return (
     <div className="login-container">
       <div className="button-groups">
@@ -62,8 +70,10 @@ export default function Login() {
             <input
               type="text"
               placeholder="Username"
-              defaultValue={username}
-              onChange={(e) => setUsername(e.target.value)}
+              defaultValue={sessionStorage.getItem("username")}
+              onChange={(e) => {
+                sessionStorage.setItem("username", e.target.value);
+              }}
             />
           </div>
         </div>

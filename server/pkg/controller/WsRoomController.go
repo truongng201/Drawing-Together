@@ -10,6 +10,8 @@ import (
 type WsRoomController struct {}
 
 
+
+
 func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsServer) error {
     conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
     if err != nil {
@@ -22,7 +24,7 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 
 
 	client := socket.NewClient(
-		conn, "Test User", wsServer,
+		conn, "", wsServer,
 	)
 
 	client.ReadMessage()

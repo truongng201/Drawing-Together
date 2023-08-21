@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/labstack/gommon/log"
 )
 
 type Client struct {
@@ -45,8 +46,8 @@ func (client *Client) ReadMessage() {
 	for {
 		_, message, err := client.Conn.ReadMessage()
 		if err != nil {
-			fmt.Println("client.ReadMessage.err", err)
-			break
+			log.Error("client.ReadMessage.err", err)
+			return
 		}
 		client.handleNewMessage(message)
 	}
@@ -54,25 +55,31 @@ func (client *Client) ReadMessage() {
 
 
 func (client *Client) handleNewMessage(jsonMessage []byte) {
-	var message MessageBody
+	var message MessageRequest
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
-		fmt.Println("client.handleNewMessage.err", err)
+		log.Error("client.handleNewMessage.err", err)
 		return
 	}
-	fmt.Println("client.handleNewMessage.message", message)
 
-	// message.Sender = *client
+	if message.Sender.ClientName == "" {
+		log.Error("client.handleNewMessage.err", "client name is empty")
+		return
+	}
+	client.ClientName = message.Sender.ClientName
 
 	switch message.Action {
-	// case SendMessageAction:
+	// case ChatAction:
 	// 	roomID := message.Target.RoomID
 	// 	if room := client.WsServer.FindRoomByID(roomID); room != nil {
 	// 		room.Broadcast <- message
 	// 	}
 	case JoinRoomAction:
 		client.handleJoinRoomMessage(message)
+	case CreateRoomAction:
+		client.handleCreateRoomMessage(message)
 	}
 }
+
 
 func (client *Client) WriteMessage() {
 	defer func() {
@@ -91,8 +98,8 @@ func (client *Client) WriteMessage() {
 	}
 }
 
-func(client *Client) handleJoinRoomMessage(message MessageBody) {
-	fmt.Println("client.handleJoinRoomMessage.message", message)
+
+func(client *Client) handleJoinRoomMessage(message MessageRequest) {
 	roomID := message.Target.RoomID
 	fmt.Println("client.handleJoinRoomMessage.roomID", roomID)
 	room := client.WsServer.FindRoomByID(roomID);
@@ -106,4 +113,22 @@ func(client *Client) handleJoinRoomMessage(message MessageBody) {
 	client.rooms[room] = true
 	fmt.Println("client.handleJoinRoomMessage.client", client.ClientID)
 	room.Register <- client
+	room.Broadcast <- Message{
+
+	}
+}
+
+
+func(client *Client) handleCreateRoomMessage(message MessageRequest) {
+	room := NewRoom(false, 5)
+	client.WsServer.Rooms[room] = true
+	go room.Start()
+	client.rooms[room] = true
+	room.Register <- client
+	room.Broadcast <- Message{
+		Action: CreateRoomAction,
+		Target: room,
+		Sender: client,
+		Message: "Room created",
+	}
 }

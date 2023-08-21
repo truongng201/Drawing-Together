@@ -1,11 +1,6 @@
 package socket
 
-// import (
-// 	"encoding/json"
-// 	"log"
-// )
-
-const SendMessageAction = "send-message"
+const ChatAction = "chat"
 const JoinRoomAction = "join-room"
 const LeaveRoomAction = "leave-room"
 const CreateRoomAction = "create-room"
@@ -14,24 +9,33 @@ const CreateRoomAction = "create-room"
 type Message struct {
 	Action  string  `json:"action"`
 	Message string  `json:"message"`
-	Target  Room   `json:"target"`
-	Sender  Client `json:"sender"`
+	Target  *Room   `json:"target"`
+	Sender  *Client `json:"sender"`
 }
 
-type MessageBodyClient struct {
+type MessageRequestClient struct {
 	ClientName string `json:"client_name"`
 }
 
-type MessageBodyRoom struct {
-	RoomID string `json:"room_id"`
+type MessageRequestRoom struct {
+	RoomID 		string 	`json:"room_id"`
+	MaxPlayers 	int 	`json:"max_players"`
+	Private 	bool 	`json:"private"`
 }
 
 
-type MessageBody struct {
-	Action  string  `json:"action"`
-	Message string  `json:"message"`
-	Sender  MessageBodyClient   `json:"sender"`
-	Target  MessageBodyRoom   `json:"target"`
+type MessageRequest struct{
+	Action  string  				`json:"action"`
+	Sender  MessageRequestClient   	`json:"sender"`
+	Target  MessageRequestRoom  	`json:"target"`
+	Payload string 					`json:"payload"`
+}
+
+type MessageResponse struct{
+	Action  string  				`json:"action"`
+	Sender  MessageRequestClient   	`json:"sender"`
+	Target  MessageRequestRoom  	`json:"target"`
+	Payload string 					`json:"payload"`
 }
 
 // func (message *Message) encode() []byte {
