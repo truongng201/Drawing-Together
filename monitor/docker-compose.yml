@@ -1,9 +1,10 @@
+version: '2.2'
 services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    ports:
-      - "9090:9090"
+    # ports:
+    #   - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -16,48 +17,26 @@ services:
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
-    command:
-      - "--path.rootfs=/host"
     pid: host
     restart: unless-stopped
-    volumes:
-      - "/:/host:ro,rslave"
-
-  # postgres-exporter:
-  #   image: quay.io/prome theuscommunity/postgres-exporter:v0.11.1
-  #   container_name: postgres_exporter
-  #   environment:
-  #     - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${SERVER_IP}:5432/${POSTGRES_DBNAME}?sslmode=disable
-  #   volumes:
-  #     - ./postgres_exporter.yml:/postgres_exporter.yml
-  #     - ./postgres_exporter-queries.yml:/queries.yml
-  #   ports:
-  #     - 9187:9187
-  #   command:
-  #     - '--extend.query-path=/queries.yml'
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.45.0
-    container_name: cadvisor
     ports:
-      - "9092:8080"
+      - "9100:9100"
     volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
       - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
-    restart: unless-stopped
-    privileged: true
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)"
+
 
   grafana:
     image: grafana/grafana:latest
     user: "0:0"
     container_name: grafana
     ports:
-      - "3001:3001"
+      - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana.ini:/etc/grafana/grafana.ini
@@ -78,11 +57,27 @@ services:
     image: grafana/promtail:latest
     container_name: promtail
     volumes:
-      # - /var/log:/var/log
+      - /var/log:/var/log
       - ./promtail-config.yaml:/etc/promtail/config.yml
-      # - /run/docker.sock:/run/docker.sock
+      - /run/docker.sock:/run/docker.sock
     command: -config.file=/etc/promtail/config.yml
     restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
+    container_name: cadvisor
+    ports:
+      - "9092:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+    privileged: true
 
 volumes:
   prometheus-data:
