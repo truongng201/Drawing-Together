@@ -5,7 +5,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus-prod.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     restart: unless-stopped
     command:
@@ -24,7 +24,7 @@ services:
       - "/:/host:ro,rslave"
 
   # postgres-exporter:
-  #   image: quay.io/prometheuscommunity/postgres-exporter:v0.11.1
+  #   image: quay.io/prome theuscommunity/postgres-exporter:v0.11.1
   #   container_name: postgres_exporter
   #   environment:
   #     - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${SERVER_IP}:5432/${POSTGRES_DBNAME}?sslmode=disable
@@ -71,16 +71,16 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
-      - ./loki-local-config.yaml:/etc/loki/local-config.yaml
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
     restart: unless-stopped
 
   promtail:
     image: grafana/promtail:latest
     container_name: promtail
     volumes:
-      - /var/log:/var/log
+      # - /var/log:/var/log
       - ./promtail-config.yaml:/etc/promtail/config.yml
-      - /run/docker.sock:/run/docker.sock
+      # - /run/docker.sock:/run/docker.sock
     command: -config.file=/etc/promtail/config.yml
     restart: unless-stopped
 
