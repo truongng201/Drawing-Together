@@ -17,27 +17,27 @@ services:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
     command:
-      - '--path.rootfs=/host'
+      - "--path.rootfs=/host"
     pid: host
     restart: unless-stopped
     volumes:
-      - '/:/host:ro,rslave'
+      - "/:/host:ro,rslave"
 
-  postgres-exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter:v0.11.1
-    container_name: postgres_exporter
-    environment:
-      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${SERVER_IP}:5432/${POSTGRES_DBNAME}?sslmode=disable
-    volumes:
-      - ./postgres_exporter.yml:/postgres_exporter.yml
-      - ./postgres_exporter-queries.yml:/queries.yml
-    ports:
-      - 9187:9187
-    command:
-      - '--extend.query-path=/queries.yml'
+  # postgres-exporter:
+  #   image: quay.io/prometheuscommunity/postgres-exporter:v0.11.1
+  #   container_name: postgres_exporter
+  #   environment:
+  #     - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${SERVER_IP}:5432/${POSTGRES_DBNAME}?sslmode=disable
+  #   volumes:
+  #     - ./postgres_exporter.yml:/postgres_exporter.yml
+  #     - ./postgres_exporter-queries.yml:/queries.yml
+  #   ports:
+  #     - 9187:9187
+  #   command:
+  #     - '--extend.query-path=/queries.yml'
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.45.0     
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
     container_name: cadvisor
     ports:
       - "9092:8080"
@@ -53,11 +53,11 @@ services:
     privileged: true
 
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana:latest
     user: "0:0"
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "3001:3001"
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana.ini:/etc/grafana/grafana.ini
