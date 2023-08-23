@@ -80,4 +80,4 @@ jobs:
 
       - name: Generate new ssl certificate with certbot
         run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJEC_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJECT_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
