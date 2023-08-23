@@ -1,6 +1,10 @@
 package config
 
 import (
+	"path"
+	"path/filepath"
+	"runtime"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -23,12 +27,13 @@ type config struct {
 var Con config
 
 func LoadConfig() (config config, err error) {
-	log.Info("Loading config file")
+	log.Println("Loading config file")
 
 	Config := &Con
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(filepath.Join(rootDir(), "config"))
+
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -39,4 +44,10 @@ func LoadConfig() (config config, err error) {
 		log.Printf("Unable to decode into struct, %v", err)
 	}
 	return
+}
+
+func rootDir() string {
+	_, b, _, _ := runtime.Caller(0)
+	d := path.Join(path.Dir(b))
+	return filepath.Dir(d)
 }

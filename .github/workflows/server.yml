@@ -42,7 +42,7 @@ jobs:
 
       - name: Set up server config
         run: |
-          cd server
+          cd server/pkg/config
           echo "${{ secrets.SERVER_CONFIG_FILE }}" > config.yml
 
       - name: Login to Docker Hub

@@ -48,6 +48,8 @@ func main() {
 		e.Logger.Info("Server is running on port 8080")
 		e.Logger.Fatal(e.Start(":8080"))
 	default:
+		CustomLogConfig()
+		e.Use(middleware.Logger())
 		e.Logger.Fatal("Environment not set")
 		return
 	}
