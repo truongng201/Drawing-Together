@@ -15,7 +15,7 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 	wsServer := socket.NewWsServer()
 	go wsServer.Start()
 
-	e.GET("/room", func(c echo.Context) error {
+	e.GET("/room/", func(c echo.Context) error {
 		return controller.WsRoomController.Execute(c, wsServer)
 	})
 
