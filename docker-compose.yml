@@ -42,12 +42,15 @@ services:
 
   nginx:
     build:
-      context: ./client
+      context: ./nginx
       dockerfile: Dockerfile
     container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       # - ./nginx/default.conf:/etc/nginx/conf.d/*
       - ./nginx/templates:/etc/nginx/templates
     environment:
-      - FRONTEND_URL=localhost1
-      - BACKEND_URL=localhost2
+      - CLIENT_DOMAIN=localhost1
+      - SERVER_DOMAIN=localhost2
