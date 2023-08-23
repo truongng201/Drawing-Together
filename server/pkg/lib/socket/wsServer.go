@@ -1,24 +1,24 @@
 package socket
 
 import (
-	"github.com/labstack/gommon/log"
+	log "github.com/sirupsen/logrus"
 )
 
 type WsServer struct {
-	Clients   	map[*Client]bool
-	Register   	chan *Client
-	Unregister 	chan *Client
-	Broadcast  	chan []byte
-	Rooms      	map[*Room]bool
+	Clients    map[*Client]bool
+	Register   chan *Client
+	Unregister chan *Client
+	Broadcast  chan []byte
+	Rooms      map[*Room]bool
 }
 
 func NewWsServer() *WsServer {
 	return &WsServer{
-		Clients		:   make(map[*Client]bool),
-		Register	:   make(chan *Client),
-		Unregister	: 	make(chan *Client),
-		Broadcast	:  	make(chan []byte),
-		Rooms		:   make(map[*Room]bool),
+		Clients:    make(map[*Client]bool),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
+		Broadcast:  make(chan []byte),
+		Rooms:      make(map[*Room]bool),
 	}
 }
 
@@ -35,7 +35,7 @@ func (wsServer *WsServer) Start() {
 	}
 }
 
-func (wsServer *WsServer) registerClient(client *Client)  {
+func (wsServer *WsServer) registerClient(client *Client) {
 	wsServer.Clients[client] = true
 }
 
@@ -59,10 +59,10 @@ func (wsServer *WsServer) FindRoomByID(roomID string) *Room {
 			break
 		}
 	}
-	return foundRoom	
+	return foundRoom
 }
 
-func (WsServer *WsServer) FindClientByID(clientID string) *Client{
+func (WsServer *WsServer) FindClientByID(clientID string) *Client {
 	var foundClient *Client
 	for client := range WsServer.Clients {
 		if client.ClientID == clientID {
@@ -72,7 +72,6 @@ func (WsServer *WsServer) FindClientByID(clientID string) *Client{
 	}
 	return foundClient
 }
-
 
 func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int, roomID string) *Room {
 	room := NewRoom(private, maxPlayers, roomID)

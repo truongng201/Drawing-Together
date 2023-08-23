@@ -5,28 +5,28 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/labstack/gommon/log"
+	log "github.com/sirupsen/logrus"
 )
 
 type Client struct {
-	ClientID   	string			`json:"client_id"`
-	ClientName 	string			`json:"client_name"`
-	AvatarUrl 	string			`json:"avatar_url"`
-	Conn 		*websocket.Conn
-	WsServer 	*WsServer
-	rooms 		map[*Room]bool
-	send 		chan []byte
+	ClientID   string `json:"client_id"`
+	ClientName string `json:"client_name"`
+	AvatarUrl  string `json:"avatar_url"`
+	Conn       *websocket.Conn
+	WsServer   *WsServer
+	rooms      map[*Room]bool
+	send       chan []byte
 }
 
 func NewClient(Conn *websocket.Conn, clientName string, avatarUrl string, WsServer *WsServer) *Client {
 	return &Client{
-		ClientID	:   uuid.New().String(),
-		ClientName  : 	clientName,
-		AvatarUrl	: 	avatarUrl,
-		Conn		: 	Conn,
-		WsServer	: 	WsServer,
-		rooms		: 	make(map[*Room]bool),
-		send 		: 	make(chan []byte),
+		ClientID:   uuid.New().String(),
+		ClientName: clientName,
+		AvatarUrl:  avatarUrl,
+		Conn:       Conn,
+		WsServer:   WsServer,
+		rooms:      make(map[*Room]bool),
+		send:       make(chan []byte),
 	}
 }
 
@@ -53,7 +53,6 @@ func (client *Client) ReadMessage() {
 	}
 }
 
-
 func (client *Client) handleNewMessage(jsonMessage []byte) {
 	var message Message
 	if err := json.Unmarshal(jsonMessage, &message); err != nil {
@@ -79,21 +78,20 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 	}
 }
 
-
 func (client *Client) WriteMessage() {
 	defer func() {
 		client.disconnect()
 	}()
-	
+
 	for {
 		select {
 		case message := <-client.send:
 			var msg Message
-			if err := json.Unmarshal(message, &msg); err != nil{
+			if err := json.Unmarshal(message, &msg); err != nil {
 				log.Error(err)
-				return  
+				return
 			}
-			if err := client.Conn.WriteJSON(msg); err != nil{
+			if err := client.Conn.WriteJSON(msg); err != nil {
 				log.Error(err)
 				return
 			}
@@ -101,10 +99,9 @@ func (client *Client) WriteMessage() {
 	}
 }
 
-
-func(client *Client) handleJoinRoomAction(message Message) {
+func (client *Client) handleJoinRoomAction(message Message) {
 	roomID := message.Target.RoomID
-	room := client.WsServer.FindRoomByID(roomID);
+	room := client.WsServer.FindRoomByID(roomID)
 	if room == nil {
 		log.Error("Room not found")
 		return
@@ -115,45 +112,44 @@ func(client *Client) handleJoinRoomAction(message Message) {
 	room.Broadcast <- Message{
 		Action: JoinRoomAction,
 		Target: MessageRoom{
-			RoomID: room.RoomID,
+			RoomID:     room.RoomID,
 			MaxPlayers: room.MaxPlayers,
-			Private: room.Private,
+			Private:    room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
-			ClientID: client.ClientID,
-			AvatarUrl: client.AvatarUrl,
+			ClientID:   client.ClientID,
+			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: "A new user has joined the room",
 	}
-	
+
 }
 
-
-func(client *Client) handleCreateRoomAction(message Message) {
-	room := client.WsServer.CreateRoom( message.Target.Private, message.Target.MaxPlayers, message.Target.RoomID)
+func (client *Client) handleCreateRoomAction(message Message) {
+	room := client.WsServer.CreateRoom(message.Target.Private, message.Target.MaxPlayers, message.Target.RoomID)
 	client.rooms[room] = true
 	room.Register <- client
 	room.Broadcast <- Message{
 		Action: CreateRoomAction,
 		Target: MessageRoom{
-			RoomID: room.RoomID,
+			RoomID:     room.RoomID,
 			MaxPlayers: room.MaxPlayers,
-			Private: room.Private,
+			Private:    room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
-			ClientID: client.ClientID,
-			AvatarUrl: client.AvatarUrl,
+			ClientID:   client.ClientID,
+			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: "Room created successfully",
 	}
 }
 
-func(client *Client) handleChatAction(message Message){
+func (client *Client) handleChatAction(message Message) {
 	roomID := message.Target.RoomID
 	room := client.WsServer.FindRoomByID(roomID)
-	if room == nil{
+	if room == nil {
 		log.Error("Room not found")
 		return
 	}
@@ -161,14 +157,14 @@ func(client *Client) handleChatAction(message Message){
 	room.Broadcast <- Message{
 		Action: ChatAction,
 		Target: MessageRoom{
-			RoomID: room.RoomID,
+			RoomID:     room.RoomID,
 			MaxPlayers: room.MaxPlayers,
-			Private: room.Private,
+			Private:    room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
-			ClientID: client.ClientID,
-			AvatarUrl: client.AvatarUrl,
+			ClientID:   client.ClientID,
+			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: message.Payload,
 	}
