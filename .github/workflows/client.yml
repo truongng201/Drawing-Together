@@ -38,10 +38,11 @@ jobs:
     if: needs.check_folder_client_changed.outputs.is_changed == 'true'
     steps:
       - uses: actions/checkout@v2
-
-      - name: merge main into vercel deploy
-        uses: devmasx/merge-branch@master
         with:
-          type: now
-          target_branch: vercel-deploy
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+
+      - name: Merge to vercel deploy branch
+        run: |
+          git checkout vercel-deploy
+          git merge main --no-edit
+          git push origin deploy
