@@ -6,11 +6,11 @@ on:
       - main
 
 jobs:
-  check_folder_monitor_changed:
-    name: Check if monitor folder changed
+  check_folder_grafana_changed:
+    name: Check if grafana folder changed
     runs-on: ubuntu-latest
     outputs:
-      is_changed: ${{ steps.changes.outputs.monitor }}
+      is_changed: ${{ steps.changes.outputs.grafana }}
 
     steps:
       - uses: actions/checkout@v2
@@ -19,16 +19,65 @@ jobs:
         with:
           filters: |
             monitor:
-              - 'monitor/**'
+              - 'monitor/grafana/production/**'
 
-      # run only if "monitor" files were changed
-      - name: monitor is changed
-        if: steps.changes.outputs.monitor == 'true'
-        run: echo "Folder monitor has changed"
+      # run only if "grafana" files were changed
+      - name: grafana is changed
+        if: steps.changes.outputs.grafana == 'true'
+        run: echo "Folder grafana has changed"
 
-      # run only if "monitor" files were not changed
-      - name: monitor is not changed
-        if: steps.changes.outputs.monitor == 'false'
-        run: echo "Folder monitor has not changed"
+      # run only if "grafana" files were not changed
+      - name: grafana is not changed
+        if: steps.changes.outputs.grafana == 'false'
+        run: echo "Folder grafana has not changed"
+  
+  check_folder_loki_changed:
+    name: Check if loki folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.loki }}
 
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            monitor:
+              - 'monitor/loki/production/**'
+
+      # run only if "loki" files were changed
+      - name: loki is changed
+        if: steps.changes.outputs.loki == 'true'
+        run: echo "Folder loki has changed"
+
+      # run only if "loki" files were not changed
+      - name: loki is not changed
+        if: steps.changes.outputs.loki == 'false'
+        run: echo "Folder loki has not changed"
+
+  check_folder_prometheus_changed:
+    name: Check if prometheus folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.prometheus }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            monitor:
+              - 'monitor/prometheus/production/**'
+
+      # run only if "prometheus" files were changed
+      - name: prometheus is changed
+        if: steps.changes.outputs.prometheus == 'true'
+        run: echo "Folder prometheus has changed"
+
+      # run only if "prometheus" files were not changed
+      - name: prometheus is not changed
+        if: steps.changes.outputs.prometheus == 'false'
+        run: echo "Folder prometheus has not changed"
   
