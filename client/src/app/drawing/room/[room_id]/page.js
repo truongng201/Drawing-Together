@@ -54,7 +54,7 @@ export default function Room({ params }) {
         });
       }, 3000);
     }
-  }, [searchParams, username, avatar_url, room_id]);
+  }, [searchParams, username, avatar_url, room_id, ws]);
 
   return (
     <div className="room-container">

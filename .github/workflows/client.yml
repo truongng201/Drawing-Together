@@ -13,7 +13,7 @@ jobs:
       is_changed: ${{ steps.changes.outputs.client }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
         id: changes
         with:
@@ -31,18 +31,47 @@ jobs:
         if: steps.changes.outputs.client == 'false'
         run: echo "Folder client has not changed"
 
-  merge_main_into_vercel_deploy:
-    name: Merge main into vercel deploy
+  # create_pull_request:
+  #   name: Create pull request to merge from main to vercel-deploy
+  #   runs-on: ubuntu-latest
+  #   needs: [check_folder_client_changed]
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Make changes to pull request
+  #       run: date +%s > report.txt
+
+  #     - name: Create Pull Request
+  #       id: cpr
+  #       uses: peter-evans/create-pull-request@v5
+  #       with:
+  #         commit-message: "Merge from main to vercel-deploy"
+  #         title: "Merge from main to vercel-deploy"
+  #         body: "This is an auto-generated pull request to merge from main to vercel-deploy"
+  #         base: vercel-deploy
+  #         branch: main
+
+  merge_pull_request:
+    name: Create pull request to merge from main to vercel-deploy
     runs-on: ubuntu-latest
     needs: [check_folder_client_changed]
     if: needs.check_folder_client_changed.outputs.is_changed == 'true'
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: main
+      - uses: actions/checkout@v3
 
-      - name: Merge to vercel deploy branch
-        run: |
-          git switch vercel-deploy
-          git merge main --no-edit
-          git push origin vercel-deploy
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PROJECT_ALPHA_GITHUB_TOKEN }}
+          commit-message: "Merge from main to vercel-deploy"
+          committer: Project Alpha CI/CD <${{secrets.USER_EMAIL}}>
+          title: "Merge from main to vercel-deploy"
+          body: "This is an auto-generated pull request to merge from main to vercel-deploy"
+          base: vercel-deploy
+          branch: main
+      
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.PROJECT_ALPHA_GITHUB_TOKEN }}
+          pull-request-number: 1

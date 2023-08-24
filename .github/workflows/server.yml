@@ -13,7 +13,7 @@ jobs:
       is_changed: ${{ steps.changes.outputs.server }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
         id: changes
         with:
@@ -38,7 +38,7 @@ jobs:
     if: needs.check_folder_server_changed.outputs.is_changed == 'true'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up server config
         run: |
