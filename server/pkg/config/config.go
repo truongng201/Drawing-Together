@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -12,20 +11,24 @@ import (
 
 type config struct {
 	// Database
-	Database struct {
-		POSTGRES_USER    	string 
-		POSTGRES_PASSWORD 	string 
-		POSTGRES_DB      	string 
-		POSTGRES_HOST    	string 
-		POSTGRES_PORT    	string
-	}
-}		
+	// Database struct {
+	// 	POSTGRES_USER     string
+	// 	POSTGRES_PASSWORD string
+	// 	POSTGRES_DB       string
+	// 	POSTGRES_HOST     string
+	// 	POSTGRES_PORT     string
+	// }
+	// Server environment
+	Environment string
+	// Allowed origins
+	AllowedOrigins []string
+}
 
 var Con config
 
-func LoadConfig() (config config, err error){
+func LoadConfig() (config config, err error) {
 	log.Println("Loading config file")
-	
+
 	Config := &Con
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
@@ -34,15 +37,14 @@ func LoadConfig() (config config, err error){
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("Error reading config file, %s", err)
+		log.Printf("Error reading config file, %s", err)
 	}
 
 	if err := viper.Unmarshal(&Config); err != nil {
-		fmt.Printf("Unable to decode into struct, %v", err)
+		log.Printf("Unable to decode into struct, %v", err)
 	}
-	return 
+	return
 }
-
 
 func rootDir() string {
 	_, b, _, _ := runtime.Caller(0)

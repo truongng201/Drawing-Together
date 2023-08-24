@@ -4,24 +4,20 @@ import (
 	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	log "github.com/sirupsen/logrus"
 )
 
-type WsRoomController struct {}
-
-
-
+type WsRoomController struct{}
 
 func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsServer) error {
-    conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
-    if err != nil {
-        return err
-    }
+	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+	if err != nil {
+		return err
+	}
 
-    defer conn.Close()
+	defer conn.Close()
 
-    log.Info("Client address: ",conn.RemoteAddr())
-
+	log.Info("Client address: ", conn.RemoteAddr())
 
 	client := socket.NewClient(
 		conn, "", "", wsServer,
@@ -30,6 +26,6 @@ func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsSe
 	go client.WriteMessage()
 	client.ReadMessage()
 
-	wsServer.Register<- client
+	wsServer.Register <- client
 	return nil
 }
