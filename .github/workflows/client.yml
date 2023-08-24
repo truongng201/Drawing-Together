@@ -31,13 +31,17 @@ jobs:
         if: steps.changes.outputs.client == 'false'
         run: echo "Folder client has not changed"
 
-  create_pull_request:
-    name: Create pull request to merge main into vercel deploy
+  merge_main_into_vercel_deploy:
+    name: Merge main into vercel deploy
     runs-on: ubuntu-latest
     needs: [check_folder_client_changed]
     if: needs.check_folder_client_changed.outputs.is_changed == 'true'
     steps:
-      - name: create pull request
-        run: gh pr create -B main -H vercel-deploy --title 'Merge main into vercel deploy' --body 'Created by Github action'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_ALPHA_GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+
+      - name: merge main into vercel deploy
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          target_branch: vercel-deploy
+          github_token: ${{ secrets.GITHUB_TOKEN }}

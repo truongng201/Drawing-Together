@@ -48,7 +48,7 @@
 .right-container {
   background: white;
   flex: 1;
-  padding: 20px;
+  /* padding: 20px; */
   box-sizing: border-box;
   height: 100%; /* Set the height of the container to 100% of the viewport height */
   overflow: auto; /* Add scrolling if content overflows */

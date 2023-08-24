@@ -23,7 +23,7 @@ services:
     restart: always
     hostname: client
     ports:
-      - "3001:3000"
+      - "3000:3000"
     volumes:
       - "./client:/app"
       - "/app/node_modules"

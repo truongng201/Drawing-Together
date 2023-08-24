@@ -3,11 +3,12 @@ import "./monitor.css";
 export default function Monitor() {
   return (
     <div className="monitor-container">
-      <div className="monitor">
-        <div className="monitor-header">
-          <h1>Monitor</h1>
-        </div>
-      </div>
+      <iframe
+        src={process.env.NEXT_PUBLIC_MONITOR_DASHBOARD_SRC}
+        title="monitor"
+        width="100%"
+        height="100%"
+      />
     </div>
   );
 }

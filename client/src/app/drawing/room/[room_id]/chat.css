@@ -15,7 +15,6 @@
   border: 3px solid #e6e6e6;
   width: 90%;
   margin-bottom: 0;
-  justify-content: flex-end;
   color: #797979;
   height: 40px;
   font-weight: 500;
@@ -28,9 +27,11 @@
 }
 
 .chat-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-rows: 80% 20%;
+  height: 100%;
+  width: 100%;
+  place-items: center;
 }
 
 .chat-messages {
@@ -39,7 +40,7 @@
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: auto;
-  height: 150px;
+  max-height: 130px;
   width: 90%;
   padding: 10px 0px;
   overflow-wrap: break-word;

@@ -28,12 +28,6 @@ export default function SideNavbar() {
             className: 'page-component blog',
             iconPath: '/icons/blog.png'
         },
-        {
-            name: 'Settings',
-            link: '/settings',
-            className: 'page-component settings',
-            iconPath: '/icons/settings.png'
-        }
     ]
     return (
         <div className="sidenavbar">
