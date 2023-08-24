@@ -30,7 +30,7 @@ jobs:
       - name: nginx is not changed
         if: steps.changes.outputs.nginx == 'false'
         run: echo "Folder nginx has not changed"
-  
+
   build_and_push:
     name: Build and Push Server Docker Image
     runs-on: ubuntu-latest
@@ -52,7 +52,6 @@ jobs:
       - name: Push Nginx Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-nginx:latest
 
-
   pull_and_run_on_droplet:
     name: Pull Config and Run Docker Image on Droplet
     needs: [build_and_push]
@@ -62,7 +61,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Install SSH key
         run: |
           mkdir -p ~/.ssh/
@@ -83,8 +82,9 @@ jobs:
       #     ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJECT_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
 
       # Error when running certbot since too many requests were made to the letsencrypt server
-      # To fix this, copy the ssl certificate from the server to the docker image
-      - name: Copy ssl certifcate to docker image
+      # To fix this, copy the ssl certificate from the server to the docker image and reinstall it
+      - name: Copy and reinstall ssl certifcate to docker image
         run: |
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./letsencrypt nginx:/etc'
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./conf.d nginx:/etc/nginx'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx nginx -s reload'
