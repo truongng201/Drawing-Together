@@ -43,6 +43,6 @@ jobs:
 
       - name: Merge to vercel deploy branch
         run: |
-          git checkout vercel-deploy
+          git switch vercel-deploy
           git merge main --no-edit
           git push origin vercel-deploy
