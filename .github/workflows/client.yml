@@ -68,8 +68,7 @@ jobs:
           committer: Project Alpha CI/CD <${{secrets.USER_EMAIL}}>
           title: "Merge from main to vercel-deploy"
           body: "This is an auto-generated pull request to merge from main to vercel-deploy"
-          base: vercel-deploy
-          branch: main
+          branch: vercel-deploy
       
       - uses: peter-evans/enable-pull-request-automerge@v3
         with:
