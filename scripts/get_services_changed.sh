@@ -1,27 +1,22 @@
 #!/bin/bash
 
-FOLDER_TO_MONITOR=$1
+CURRENT_FOLDER_NAME=$1
 
 # Get the current folder name
-CURRENT_FOLDER_NAME=$(basename "$FOLDER_TO_MONITOR")
+echo $CURRENT_FOLDER_NAME
 SERVICES_CHANGED=()
   # Check for changes in the folder name
 CHANGED=$(git diff --name-only HEAD~ HEAD | grep "$CURRENT_FOLDER_NAME")
 if [[ -n "$CHANGED" ]]; then
-  # read line by line of the changed files and check which services are affected 
+  # read line separated by space into bash array 
   while read -r line; do
-    # Get the service name
-    SERVICE_NAME=$(echo "$line" | cut -d'/' -f1)
-    # Check if the service name is not empty
-    if [[ -n "$SERVICE_NAME" ]]; then
-      # Check if the service name is not already in the array
-      if [[ ! " ${SERVICES_CHANGED[@]} " =~ " ${SERVICE_NAME} " ]]; then
-        # Add the service name to the array
-        SERVICES_CHANGED+=("$SERVICE_NAME")
-      fi
-    fi
+    # remove the folder name from the 
+    line=${line/$CURRENT_FOLDER_NAME\//}
+    # remove all the files from the path
+    line=${line/\/*/}
+    SERVICES_CHANGED+=("$line")
   done <<< "$CHANGED"
-  echo ${SERVICES_CHANGED}
+  echo ${SERVICES_CHANGED[@]}
   exit 0
 else
   exit 0
