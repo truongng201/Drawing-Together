@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"server/pkg/config"
 	"server/pkg/lib/socket"
 
 	"github.com/labstack/echo/v4"
@@ -10,6 +11,7 @@ import (
 type WsRoomController struct{}
 
 func (controller WsRoomController) Execute(c echo.Context, wsServer *socket.WsServer) error {
+	var upgrader = config.WsUpgrade()
 	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
 		return err

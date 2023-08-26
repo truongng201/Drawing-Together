@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -47,7 +48,7 @@ func (client *Client) ReadMessage() {
 	for {
 		_, message, err := client.Conn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure, websocket.CloseNoStatusReceived) {
 				log.Error(err)
 			}
 			return
@@ -72,12 +73,14 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 	switch message.Action {
 	case ChatAction:
-		log.Info("Chat action")
 		client.handleChatAction(message)
 	case JoinRoomAction:
 		client.handleJoinRoomAction(message)
-	case CreateRoomAction:
-		client.handleCreateRoomAction(message)
+	default:
+		log.Error("Invalid action")
+		client.WsServer.Unregister <- client
+		client.Conn.Close()
+		return
 	}
 }
 
@@ -107,52 +110,35 @@ func (client *Client) WriteMessage() {
 }
 
 func (client *Client) handleJoinRoomAction(message Message) {
-	roomID := message.Target.RoomID
-	room := client.WsServer.FindRoomByID(roomID)
+	room := client.WsServer.FindRoomByID(message.Target.RoomID)
 	if room == nil {
 		log.Error("Room not found")
 		client.WsServer.Unregister <- client
 		client.Conn.Close()
 		return
 	}
+
 	client.rooms[room] = true
-	log.Info(client.ClientID)
+	
+	
 	room.Register <- client
+
+	room.GetAllClientInRoom()
 	room.Broadcast <- Message{
 		Action: JoinRoomAction,
 		Target: MessageRoom{
 			RoomID:     room.RoomID,
-			MaxPlayers: room.MaxPlayers,
-			Private:    room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
 			ClientID:   client.ClientID,
 			AvatarUrl:  client.AvatarUrl,
 		},
-		Payload: "A new user has joined the room",
+		Payload: MessagePayload{
+			Message: fmt.Sprintf("%s joined room", client.ClientName),
+		},
 	}
 
-}
-
-func (client *Client) handleCreateRoomAction(message Message) {
-	room := client.WsServer.CreateRoom(message.Target.Private, message.Target.MaxPlayers)
-	client.rooms[room] = true
-	room.Register <- client
-	room.Broadcast <- Message{
-		Action: CreateRoomAction,
-		Target: MessageRoom{
-			RoomID:     room.RoomID,
-			MaxPlayers: room.MaxPlayers,
-			Private:    room.Private,
-		},
-		Sender: MessageClient{
-			ClientName: client.ClientName,
-			ClientID:   client.ClientID,
-			AvatarUrl:  client.AvatarUrl,
-		},
-		Payload: "Room created successfully",
-	}
 }
 
 func (client *Client) handleChatAction(message Message) {
@@ -167,13 +153,9 @@ func (client *Client) handleChatAction(message Message) {
 		Action: ChatAction,
 		Target: MessageRoom{
 			RoomID:     room.RoomID,
-			MaxPlayers: room.MaxPlayers,
-			Private:    room.Private,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
-			ClientID:   client.ClientID,
-			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: message.Payload,
 	}

@@ -67,11 +67,9 @@ func (room *Room) unregisterClient(client *Client) {
 	}
 	log.Info("A user left the chat")
 	msg, err := json.Marshal(Message{
-		Action: LeaveRoomAction,
+		Action: ChatAction,
 		Target: MessageRoom{
-			RoomID:     room.RoomID,
-			MaxPlayers: room.MaxPlayers,
-			Private:    room.Private,
+			RoomID: room.RoomID,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
@@ -93,5 +91,11 @@ func (room *Room) broadcastMessage(message []byte) {
 	log.Info(fmt.Sprintf("Number of clients in room %s: %d", room.RoomID, len(room.Clients)))
 	for client := range room.Clients {
 		client.send <- message
+	}
+}
+
+func (room *Room) GetAllClientInRoom(){
+	for client := range room.Clients {
+		log.Info(client.ClientName)
 	}
 }

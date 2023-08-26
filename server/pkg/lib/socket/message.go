@@ -8,14 +8,12 @@ import (
 
 const ChatAction = "chat"
 const JoinRoomAction = "join-room"
-const LeaveRoomAction = "leave-room"
-const CreateRoomAction = "create-room"
 
 type Message struct {
 	Action  string        `json:"action"`
 	Target  MessageRoom   `json:"target"`
 	Sender  MessageClient `json:"sender"`
-	Payload string        `json:"payload"`
+	Payload interface{}   `json:"payload"`
 }
 
 type MessageClient struct {
@@ -28,6 +26,11 @@ type MessageRoom struct {
 	RoomID     string `json:"room_id"`
 	MaxPlayers int    `json:"max_players"`
 	Private    bool   `json:"private"`
+}
+
+type MessagePayload struct {
+	Message string          `json:"message"`
+	Clients []MessageClient `json:"clients"`
 }
 
 func (message *Message) encode() []byte {

@@ -35,6 +35,10 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 		return controller.CreateRoomController.Execute(c, wsServer)
 	})
 
+	e.POST("/check-room-existed", func(c echo.Context) error {
+		return controller.CheckRoomExistedController.Execute(c, wsServer)
+	})
+
 	e.GET("/room/", func(c echo.Context) error {
 		return controller.WsRoomController.Execute(c, wsServer)
 	})
