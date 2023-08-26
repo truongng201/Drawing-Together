@@ -94,8 +94,15 @@ func (room *Room) broadcastMessage(message []byte) {
 	}
 }
 
-func (room *Room) GetAllClientInRoom(){
+func (room *Room) GetAllClientInRoom() ([]MessageClient, error) {
+	var clients []MessageClient
+
 	for client := range room.Clients {
-		log.Info(client.ClientName)
+		clients = append(clients, MessageClient{
+			ClientName: client.ClientName,
+			ClientID:   client.ClientID,
+			AvatarUrl:  client.AvatarUrl,
+		})
 	}
+	return clients, nil
 }

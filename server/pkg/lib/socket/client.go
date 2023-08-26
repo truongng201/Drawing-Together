@@ -64,18 +64,27 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		return
 	}
 
+	room := client.WsServer.FindRoomByID(message.Target.RoomID)
+	if room == nil {
+		log.Error("Room ID not found")
+		client.Conn.Close()
+		client.WsServer.Unregister <- client
+		return
+	}
+
 	if message.Sender.ClientName == "" {
 		log.Error("Client name is empty")
 		return
 	}
+
 	client.ClientName = message.Sender.ClientName
 	client.AvatarUrl = message.Sender.AvatarUrl
 
 	switch message.Action {
 	case ChatAction:
-		client.handleChatAction(message)
+		client.handleChatAction(message, room)
 	case JoinRoomAction:
-		client.handleJoinRoomAction(message)
+		client.handleJoinRoomAction(message, room)
 	default:
 		log.Error("Invalid action")
 		client.WsServer.Unregister <- client
@@ -109,50 +118,44 @@ func (client *Client) WriteMessage() {
 	}
 }
 
-func (client *Client) handleJoinRoomAction(message Message) {
-	room := client.WsServer.FindRoomByID(message.Target.RoomID)
-	if room == nil {
-		log.Error("Room not found")
-		client.WsServer.Unregister <- client
-		client.Conn.Close()
-		return
-	}
-
+func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 	client.rooms[room] = true
-	
-	
 	room.Register <- client
 
-	room.GetAllClientInRoom()
+	clients, err := room.GetAllClientInRoom()
+	// add current client to clients list
+	clients = append(clients, MessageClient{
+		ClientName: client.ClientName,
+		ClientID:   client.ClientID,
+		AvatarUrl:  client.AvatarUrl,
+	})
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	room.Broadcast <- Message{
 		Action: JoinRoomAction,
 		Target: MessageRoom{
-			RoomID:     room.RoomID,
+			RoomID: room.RoomID,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
 			ClientID:   client.ClientID,
 			AvatarUrl:  client.AvatarUrl,
 		},
-		Payload: MessagePayload{
+		Payload: MessageJoinPayload{
 			Message: fmt.Sprintf("%s joined room", client.ClientName),
+			Clients: clients,
 		},
 	}
 
 }
 
-func (client *Client) handleChatAction(message Message) {
-	roomID := message.Target.RoomID
-	room := client.WsServer.FindRoomByID(roomID)
-	if room == nil {
-		log.Error("Room not found")
-		return
-	}
-
+func (client *Client) handleChatAction(message Message, room *Room) {
 	room.Broadcast <- Message{
 		Action: ChatAction,
 		Target: MessageRoom{
-			RoomID:     room.RoomID,
+			RoomID: room.RoomID,
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
