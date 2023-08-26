@@ -1,12 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import "./create.css";
+import { useState } from "react";
 // import DropdownComponent from "@/app/components/dropdown";
 import { useRouter } from "next/navigation";
-import { customAlphabet } from "nanoid";
+import axios from "axios";
+import AlertComponent from "@/app/components/alert";
 
 export default function CreateComponent() {
   const { push } = useRouter();
+  const [error, setError] = useState("");
 
   const handleCreateRoom = () => {
     if (sessionStorage.getItem("username") === "") {
@@ -15,10 +18,25 @@ export default function CreateComponent() {
         `Alpha${Math.floor(Math.random() * 100000)}`
       );
     }
-    const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
-    const room_id = nanoid(10);
-    push(`/drawing/room/${room_id}?action=create`);
+
+    axios
+      .post("http://localhost:8080/create-room", {
+        max_players: 10,
+        private: false,
+      })
+      .then((res) => {
+        const payload = res?.data
+        if (payload?.success) {
+          if (payload?.data?.room_id) {
+            push(`/drawing/room/${payload.data.room_id}`);
+          }
+        }
+      }).catch((err) => {
+        const payload = err?.response?.data;
+        setError(payload?.message || "Something went wrong");
+      });
   };
+
   return (
     <div className="create-container">
       <div className="create-top">
@@ -41,6 +59,9 @@ export default function CreateComponent() {
           Create
         </div>
       </div>
+      {error !== "" && (
+        <AlertComponent message={error} close={() => setError("")} />
+      )}
     </div>
   );
 }

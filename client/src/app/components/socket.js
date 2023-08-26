@@ -2,15 +2,16 @@ class Socket {
   constructor(path) {
     this.URI = process.env.NEXT_PUBLIC_SOCKET_URI + path + "/";
     this.socket = null;
+    this.isOpen = false;
   }
 
   open() {
     this.socket = new WebSocket(this.URI);
     this.socket.onopen = () => {
-      console.log("Socket connected");
+      this.isOpen = true;
     };
     this.socket.onclose = () => {
-      console.log("Socket disconnected");
+      this.isOpen = false;
     };
   }
 
