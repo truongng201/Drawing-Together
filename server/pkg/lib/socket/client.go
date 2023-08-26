@@ -134,7 +134,7 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 		return
 	}
 	room.Broadcast <- Message{
-		Action: JoinRoomAction,
+		Action: ChatAction,
 		Target: MessageRoom{
 			RoomID: room.RoomID,
 		},
@@ -152,6 +152,12 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 }
 
 func (client *Client) handleChatAction(message Message, room *Room) {
+	clients, err := room.GetAllClientInRoom()
+	if err != nil {
+		log.Error(err)
+		return
+
+	}
 	room.Broadcast <- Message{
 		Action: ChatAction,
 		Target: MessageRoom{
@@ -160,6 +166,9 @@ func (client *Client) handleChatAction(message Message, room *Room) {
 		Sender: MessageClient{
 			ClientName: client.ClientName,
 		},
-		Payload: message.Payload,
+		Payload: MessageChatPayload{
+			Message: message.Payload.(string),
+			Clients: clients,
+		},
 	}
 }

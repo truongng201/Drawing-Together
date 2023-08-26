@@ -10,6 +10,7 @@ import AlertComponent from "@/app/components/alert";
 export default function CreateComponent() {
   const { push } = useRouter();
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateRoom = () => {
     if (sessionStorage.getItem("username") === "") {
@@ -18,6 +19,7 @@ export default function CreateComponent() {
         `Alpha${Math.floor(Math.random() * 100000)}`
       );
     }
+    setIsLoading(true);
 
     axios
       .post("http://localhost:8080/create-room", {
@@ -25,15 +27,17 @@ export default function CreateComponent() {
         private: false,
       })
       .then((res) => {
-        const payload = res?.data
+        const payload = res?.data;
         if (payload?.success) {
           if (payload?.data?.room_id) {
             push(`/drawing/room/${payload.data.room_id}`);
           }
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         const payload = err?.response?.data;
         setError(payload?.message || "Something went wrong");
+        setIsLoading(false);
       });
   };
 
@@ -55,9 +59,15 @@ export default function CreateComponent() {
         <div className="create-settings">
           {/* <DropdownComponent listItems={["public", "private"]} /> */}
         </div>
-        <div className="create-button-page" onClick={handleCreateRoom}>
-          Create
-        </div>
+        {!isLoading ? (
+          <div className="create-button-page" onClick={handleCreateRoom}>
+            Create
+          </div>
+        ) : (
+          <div className="create-button-page" aria-disabled>
+            Loading...
+          </div>
+        )}
       </div>
       {error !== "" && (
         <AlertComponent message={error} close={() => setError("")} />

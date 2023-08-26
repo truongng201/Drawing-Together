@@ -45,6 +45,7 @@
   padding: 10px 0px;
   overflow-wrap: break-word;
   margin-bottom: 10px;
+  min-height: 100px;
 }
 
 .chat-messages::-webkit-scrollbar {

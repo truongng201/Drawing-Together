@@ -1,12 +1,11 @@
 class Socket {
   constructor(path) {
     this.URI = process.env.NEXT_PUBLIC_SOCKET_URI + path + "/";
-    this.socket = null;
+    this.socket = new WebSocket(this.URI);
     this.isOpen = false;
   }
 
   open() {
-    this.socket = new WebSocket(this.URI);
     this.socket.onopen = () => {
       this.isOpen = true;
     };
