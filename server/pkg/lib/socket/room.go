@@ -66,6 +66,11 @@ func (room *Room) unregisterClient(client *Client) {
 		return
 	}
 	log.Info("A user left the chat")
+	clients, err := room.GetAllClientInRoom()
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	msg, err := json.Marshal(Message{
 		Action: ChatAction,
 		Target: MessageRoom{
@@ -76,7 +81,10 @@ func (room *Room) unregisterClient(client *Client) {
 			ClientID:   client.ClientID,
 			AvatarUrl:  client.AvatarUrl,
 		},
-		Payload: fmt.Sprintf("%s has left the room", client.ClientName),
+		Payload: MessageChatPayload{
+			Message: fmt.Sprintf("%s left room", client.ClientName),
+			Clients: clients,
+		},
 	})
 	if err != nil {
 		log.Error(err)

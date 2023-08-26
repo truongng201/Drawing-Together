@@ -28,13 +28,9 @@ type MessageRoom struct {
 	Private    bool   `json:"private"`
 }
 
-type MessageJoinPayload struct {
+type MessageChatPayload struct {
 	Message string          `json:"message"`
 	Clients []MessageClient `json:"clients"`
-}
-
-type MessageChatPayload struct {
-	Message string `json:"message"`
 }
 
 func (message *Message) encode() []byte {
