@@ -73,8 +73,8 @@ func (WsServer *WsServer) FindClientByID(clientID string) *Client {
 	return foundClient
 }
 
-func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int, roomID string) *Room {
-	room := NewRoom(private, maxPlayers, roomID)
+func (wsServer *WsServer) CreateRoom(private bool, maxPlayers int) *Room {
+	room := NewRoom(private, maxPlayers)
 	go room.Start()
 	wsServer.Rooms[room] = true
 	log.Info("Room created with ID: ", room.RoomID)

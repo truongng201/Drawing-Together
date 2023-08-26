@@ -1,6 +1,10 @@
 package socket
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,9 +20,9 @@ type Room struct {
 	Broadcast  chan Message
 }
 
-func NewRoom(private bool, maxPlayers int, roomID string) *Room {
+func NewRoom(private bool, maxPlayers int) *Room {
 	return &Room{
-		RoomID:     roomID,
+		RoomID:     uuid.New().String()[0:8],
 		Private:    private,
 		MaxPlayers: maxPlayers,
 		Register:   make(chan *Client),
@@ -44,9 +48,9 @@ func (room *Room) Start() {
 func (room *Room) registerClient(client *Client) {
 	if len(room.Clients) >= room.MaxPlayers {
 		log.Info("Room is full")
+		return
 	} else {
 		room.Clients[client] = true
-		log.Info("Size of Connection Room: ", len(room.Clients))
 		if len(room.Clients) > 1 {
 			log.Info("A new user has joined the chat")
 		}
@@ -56,14 +60,37 @@ func (room *Room) registerClient(client *Client) {
 
 func (room *Room) unregisterClient(client *Client) {
 	delete(room.Clients, client)
-	log.Info("Size of Connection Room: ", len(room.Clients))
+	if len(room.Clients) == 0 {
+		delete(client.WsServer.Rooms, room)
+		log.Info(fmt.Sprintf("Room %s has been deleted", room.RoomID))
+		return
+	}
 	log.Info("A user left the chat")
+	msg, err := json.Marshal(Message{
+		Action: LeaveRoomAction,
+		Target: MessageRoom{
+			RoomID:     room.RoomID,
+			MaxPlayers: room.MaxPlayers,
+			Private:    room.Private,
+		},
+		Sender: MessageClient{
+			ClientName: client.ClientName,
+			ClientID:   client.ClientID,
+			AvatarUrl:  client.AvatarUrl,
+		},
+		Payload: fmt.Sprintf("%s has left the room", client.ClientName),
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	for client := range room.Clients {
+		client.send <- msg
+	}
 }
 
 func (room *Room) broadcastMessage(message []byte) {
 	log.Info("Broadcasting message to all clients in room")
-	log.Info("Size of Connection Room: ", len(room.Clients))
-	log.Info("Room ID: ", room.RoomID)
+	log.Info(fmt.Sprintf("Number of clients in room %s: %d", room.RoomID, len(room.Clients)))
 	for client := range room.Clients {
 		client.send <- message
 	}

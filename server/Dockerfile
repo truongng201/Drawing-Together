@@ -1,7 +1,7 @@
 # ---------------------------------------
 # Development stage
 # ---------------------------------------
-FROM debian:latest as development
+FROM debian:latest AS development
 
 # Set environment variables for Go installation
 ENV GOLANG_VERSION 1.18

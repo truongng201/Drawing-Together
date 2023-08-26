@@ -35,6 +35,7 @@ func (client *Client) disconnect() {
 	for room := range client.rooms {
 		room.UnRegister <- client
 	}
+	log.Info("Client disconnected")
 	close(client.send)
 	client.Conn.Close()
 }
@@ -46,7 +47,9 @@ func (client *Client) ReadMessage() {
 	for {
 		_, message, err := client.Conn.ReadMessage()
 		if err != nil {
-			log.Error(err)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+				log.Error(err)
+			}
 			return
 		}
 		client.handleNewMessage(message)
@@ -80,13 +83,17 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 
 func (client *Client) WriteMessage() {
 	defer func() {
-		client.disconnect()
+		client.Conn.Close()
 	}()
 
 	for {
 		select {
-		case message := <-client.send:
+		case message, ok := <-client.send:
+			if !ok {
+				return
+			}
 			var msg Message
+
 			if err := json.Unmarshal(message, &msg); err != nil {
 				log.Error(err)
 				return
@@ -104,6 +111,8 @@ func (client *Client) handleJoinRoomAction(message Message) {
 	room := client.WsServer.FindRoomByID(roomID)
 	if room == nil {
 		log.Error("Room not found")
+		client.WsServer.Unregister <- client
+		client.Conn.Close()
 		return
 	}
 	client.rooms[room] = true
@@ -127,7 +136,7 @@ func (client *Client) handleJoinRoomAction(message Message) {
 }
 
 func (client *Client) handleCreateRoomAction(message Message) {
-	room := client.WsServer.CreateRoom(message.Target.Private, message.Target.MaxPlayers, message.Target.RoomID)
+	room := client.WsServer.CreateRoom(message.Target.Private, message.Target.MaxPlayers)
 	client.rooms[room] = true
 	room.Register <- client
 	room.Broadcast <- Message{
