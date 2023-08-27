@@ -4,20 +4,38 @@ import "./join.css";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AlertComponent from "@/app/components/alert";
+import axios from "axios";
 
 export default function JoinComponent() {
   const [roomId, setRoomId] = useState("");
-  const [errorRoomId, setErrorRoomId] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { push } = useRouter();
-  const joinRoom = (event) => {
+  const handleJoinRoom = (event) => {
     if (event.key === "Enter" || event.type === "click") {
+      setIsLoading(true);
       if (roomId === "") {
-        setErrorRoomId(true);
+        setError("Please enter room id");
+        setIsLoading(false);
         setTimeout(() => {
-          setErrorRoomId(false);
+          setError(false);
         }, 10000);
       } else {
-        push(`/drawing/room/${roomId}`);
+        axios
+          .post(`${process.env.NEXT_PUBLIC_API_URI}/check-room-existed`, {
+            room_id: roomId,
+          })
+          .then((res) => {
+            const payload = res?.data;
+            if (payload?.success) {
+              push(`/drawing/room/${roomId}`);
+            }
+          })
+          .catch((err) => {
+            const payload = err?.response?.data;
+            setError(payload?.message || "Something went wrong");
+            setIsLoading(false);
+          });
       }
     }
   };
@@ -42,21 +60,27 @@ export default function JoinComponent() {
           <input
             type="text"
             placeholder="Room ID"
-            onKeyDown={joinRoom}
+            onKeyDown={handleJoinRoom}
             onChange={(e) => {
               setRoomId(e.target.value);
             }}
           />
         </div>
-        <div className="join-button-page" onClick={joinRoom}>
-          Join
-        </div>
+        {!isLoading ? (
+          <div className="join-button-page" onClick={handleJoinRoom}>
+            Join
+          </div>
+        ) : (
+          <div className="join-button-page" aria-disabled>
+            Loading...
+          </div>
+        )}
       </div>
-      {errorRoomId && (
+      {error !== "" && (
         <AlertComponent
-          message="Please enter room id"
+          message={error}
           close={() => {
-            setErrorRoomId(false);
+            setError("");
           }}
         />
       )}

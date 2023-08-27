@@ -82,7 +82,7 @@ func (room *Room) unregisterClient(client *Client) {
 			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: MessageChatPayload{
-			Message: fmt.Sprintf("%s left room", client.ClientName),
+			Message: fmt.Sprintf("%s has left room", client.ClientName),
 			Clients: clients,
 		},
 	})

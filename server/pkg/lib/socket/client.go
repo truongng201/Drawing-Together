@@ -144,7 +144,7 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 			AvatarUrl:  client.AvatarUrl,
 		},
 		Payload: MessageChatPayload{
-			Message: fmt.Sprintf("%s joined room", client.ClientName),
+			Message: fmt.Sprintf("%s has joined room", client.ClientName),
 			Clients: clients,
 		},
 	}

@@ -38,7 +38,7 @@ func (controller *CheckRoomExistedController) Execute(c echo.Context, wsServer *
 	}
 
 	if room := wsServer.FindRoomByID(reqBody.RoomId); room == nil {
-		return c.JSON(http.StatusOK, map[string]interface{}{
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"success": false,
 			"message": "Room not found",
 			"data":    "",

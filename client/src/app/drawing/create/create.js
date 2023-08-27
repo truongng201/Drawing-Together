@@ -22,7 +22,7 @@ export default function CreateComponent() {
     setIsLoading(true);
 
     axios
-      .post("http://localhost:8080/create-room", {
+      .post(`${process.env.NEXT_PUBLIC_API_URI}/create-room`, {
         max_players: 10,
         private: false,
       })
