@@ -99,13 +99,12 @@ func (room *Room) broadcastMessage(message []byte) {
 	log.Info("Broadcasting message to all clients in room")
 	log.Info(fmt.Sprintf("Number of clients in room %s: %d", room.RoomID, len(room.Clients)))
 	var msg Message
-	if err :=json.Unmarshal(message, &Message{}); err != nil {
+	if err :=json.Unmarshal(message, &msg); err != nil {
 		log.Error(err)
 		return
 	}
 	for client := range room.Clients {
-		// broadcast message to all clients in room except sender
-		log.Info(msg)
+		// broadcast message to all clients in room except sender when drawing
 		if msg.Action == DrawingAction {
 			if client.ClientID != msg.Sender.ClientID {
 				client.send <- message

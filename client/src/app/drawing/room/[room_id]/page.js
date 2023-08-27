@@ -33,6 +33,9 @@ export default function Room({ params }) {
     ws.receive((data) => {
       setWsData(data);
     });
+    return () => {
+      ws.close();
+    };
   }, [username, avatar_url, room_id, ws]);
 
   return (

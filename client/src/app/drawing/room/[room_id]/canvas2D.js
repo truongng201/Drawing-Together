@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./canvas2D.css";
 
-export default function Canvas2D({ ws, room_id, username, avatar_url, data }) {
+export default function Canvas2D({ data, ws, room_id, username, avatar_url }) {
   const canvasRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const [context, setContext] = useState(null);
@@ -13,21 +13,21 @@ export default function Canvas2D({ ws, room_id, username, avatar_url, data }) {
     canvas.style.height = "95%";
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    console.log(data);
+    setContext(ctx);
+  }, []);
+
+  useEffect(() => {
     if (data?.action === "drawing") {
-      console.log(data);
-      if (data.payload.state === "start") {
+      if (data?.payload?.state === "start") {
         context.beginPath();
         context.moveTo(data.payload.offset_x, data.payload.offset_y);
-      } else if (data.payload.state === "continue") {
+      } else if (data?.payload?.state === "continue") {
         context.lineTo(data.payload.offset_x, data.payload.offset_y);
         context.stroke();
-      } else if (data.payload.state === "stop") {
+      } else if (data?.payload?.state === "stop") {
         context.closePath();
       }
     }
-
-    setContext(ctx);
   }, [data]);
 
   const startDrawing = (event) => {

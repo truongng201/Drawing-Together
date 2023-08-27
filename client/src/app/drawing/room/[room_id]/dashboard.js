@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 export default function Dashboard({ data }) {
   const [listClient, setListClient] = useState([]);
   useEffect(() => {
-    console.log(data);
     if (data?.action === "join-room" || data?.action === "leave-room") {
       setListClient(data.payload.clients);
     }
