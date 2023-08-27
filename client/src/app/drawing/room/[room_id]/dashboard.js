@@ -1,11 +1,19 @@
 import "./dashboard.css";
 import PlayerDashboard from "./playerDashboard";
+import { useState, useEffect } from "react";
 
-export default function Dashboard({ listClient }) {
+export default function Dashboard({ data }) {
+  const [listClient, setListClient] = useState([]);
+  useEffect(() => {
+    console.log(data);
+    if (data?.action === "join-room" || data?.action === "leave-room") {
+      setListClient(data.payload.clients);
+    }
+  }, [data]);
   return (
     <div className="dashboard">
       <div className="dashboard-players">
-        {listClient.length > 0 ? (
+        {listClient && listClient.length > 0 ? (
           listClient.map((item, index) => (
             <PlayerDashboard key={index} client={item} />
           ))

@@ -1,11 +1,9 @@
 import "./chat.css";
 import { useState, useEffect } from "react";
 
-export default function Chat({ data, room_id, ws }) {
+export default function Chat({ data, room_id, ws, username, avatar_url }) {
   const [messagesChat, setMessagesChat] = useState([]);
   const [messagesGuess, setMessagesGuess] = useState([]);
-  const username = sessionStorage.getItem("username");
-  const avatar_url = `https://api.dicebear.com/6.x/bottts-neutral/svg?seed=${username}`;
 
   useEffect(() => {
     if (data?.action === "chat") {
@@ -13,6 +11,22 @@ export default function Chat({ data, room_id, ws }) {
         ...messagesChat,
         {
           username: data.sender.client_name,
+          content: data.payload.message,
+        },
+      ]);
+    } else if (data?.action === "join-room") {
+      setMessagesChat((messagesChat) => [
+        ...messagesChat,
+        {
+          username: "Room Notification",
+          content: data.payload.message,
+        },
+      ]);
+    } else if (data?.action === "leave-room") {
+      setMessagesChat((messagesChat) => [
+        ...messagesChat,
+        {
+          username: "Room Notification",
           content: data.payload.message,
         },
       ]);

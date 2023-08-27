@@ -71,8 +71,8 @@ func (room *Room) unregisterClient(client *Client) {
 		log.Error(err)
 		return
 	}
-	msg, err := json.Marshal(Message{
-		Action: ChatAction,
+	msg := Message{
+		Action: LeaveRoomAction,
 		Target: MessageRoom{
 			RoomID: room.RoomID,
 		},
@@ -81,24 +81,38 @@ func (room *Room) unregisterClient(client *Client) {
 			ClientID:   client.ClientID,
 			AvatarUrl:  client.AvatarUrl,
 		},
-		Payload: MessageChatPayload{
-			Message: fmt.Sprintf("%s has left room", client.ClientName),
+		Payload: MessageLeaveRoomPayload{
+			Message: fmt.Sprintf("%s has left the chat", client.ClientName),
 			Clients: clients,
 		},
-	})
+	}
+
 	if err != nil {
 		log.Error(err)
 	}
 	for client := range room.Clients {
-		client.send <- msg
+		client.send <- msg.encode()
 	}
 }
 
 func (room *Room) broadcastMessage(message []byte) {
 	log.Info("Broadcasting message to all clients in room")
 	log.Info(fmt.Sprintf("Number of clients in room %s: %d", room.RoomID, len(room.Clients)))
+	var msg Message
+	if err :=json.Unmarshal(message, &Message{}); err != nil {
+		log.Error(err)
+		return
+	}
 	for client := range room.Clients {
-		client.send <- message
+		// broadcast message to all clients in room except sender
+		log.Info(msg)
+		if msg.Action == DrawingAction {
+			if client.ClientID != msg.Sender.ClientID {
+				client.send <- message
+			}
+		}else{
+			client.send <- message
+		}
 	}
 }
 

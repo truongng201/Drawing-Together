@@ -1,25 +1,32 @@
-.room-container{
-    display: grid; 
-    height: 100%;
-    grid-template-columns: 75% 25%;
-    grid-template-rows: 70% 30%;
-    width: 100%;
-    padding: 20px
+.right-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.chat{
-    grid-column: 1 / span 1;
-    width: 98%;
+.room-container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 70% 30%;
+  width: 100%;
+  max-width: 1176px;
+  max-height: 802px;
+  padding: 20px;
 }
 
-.canvas2D{
-    grid-column: 1 / span 1;
-    width: 98%;
-    height: 95%;
+.chat {
+  grid-column: 1 / span 1;
+  width: 98%;
 }
 
-.dashboard{
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 2;
-   
+.canvas2D {
+  grid-column: 1 / span 1;
+  width: 98%;
+  height: 95%;
+}
+
+.dashboard {
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 2;
 }

@@ -8,6 +8,8 @@ import (
 
 const ChatAction = "chat"
 const JoinRoomAction = "join-room"
+const LeaveRoomAction = "leave-room"
+const DrawingAction = "drawing"
 
 type Message struct {
 	Action  string        `json:"action"`
@@ -28,9 +30,24 @@ type MessageRoom struct {
 	Private    bool   `json:"private"`
 }
 
-type MessageChatPayload struct {
+type MessageJoinRoomPayload struct {
 	Message string          `json:"message"`
 	Clients []MessageClient `json:"clients"`
+}
+
+type MessageLeaveRoomPayload struct {
+	Message string          `json:"message"`
+	Clients []MessageClient `json:"clients"`
+}
+
+type MessageChatPayload struct {
+	Message string          `json:"message"`
+}
+
+type MessageDrawingPayload struct {
+	OffsetX float64         `json:"offset_x"`
+	OffsetY float64         `json:"offset_y"`
+	State   string          `json:"state"`
 }
 
 func (message *Message) encode() []byte {

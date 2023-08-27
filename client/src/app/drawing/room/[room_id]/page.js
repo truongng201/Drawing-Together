@@ -39,9 +39,21 @@ export default function Room({ params }) {
     <div className="room-container ">
       {wsData ? (
         <>
-          <Dashboard listClient={wsData?.payload.clients || []} />
-          <Canvas2D />
-          <Chat data={wsData} ws={ws} room_id={room_id} />
+          <Dashboard data={wsData} />
+          <Canvas2D
+            data={wsData}
+            ws={ws}
+            room_id={room_id}
+            username={username}
+            avatar_url={avatar_url}
+          />
+          <Chat
+            data={wsData}
+            ws={ws}
+            room_id={room_id}
+            username={username}
+            avatar_url={avatar_url}
+          />
         </>
       ) : (
         <div>Loading...</div>

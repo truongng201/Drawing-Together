@@ -85,6 +85,8 @@ func (client *Client) handleNewMessage(jsonMessage []byte) {
 		client.handleChatAction(message, room)
 	case JoinRoomAction:
 		client.handleJoinRoomAction(message, room)
+	case DrawingAction:
+		client.handleDrawingAction(message, room)
 	default:
 		log.Error("Invalid action")
 		client.WsServer.Unregister <- client
@@ -134,7 +136,7 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 		return
 	}
 	room.Broadcast <- Message{
-		Action: ChatAction,
+		Action: JoinRoomAction,
 		Target: MessageRoom{
 			RoomID: room.RoomID,
 		},
@@ -143,7 +145,7 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 			ClientID:   client.ClientID,
 			AvatarUrl:  client.AvatarUrl,
 		},
-		Payload: MessageChatPayload{
+		Payload: MessageJoinRoomPayload{
 			Message: fmt.Sprintf("%s has joined room", client.ClientName),
 			Clients: clients,
 		},
@@ -152,12 +154,6 @@ func (client *Client) handleJoinRoomAction(message Message, room *Room) {
 }
 
 func (client *Client) handleChatAction(message Message, room *Room) {
-	clients, err := room.GetAllClientInRoom()
-	if err != nil {
-		log.Error(err)
-		return
-
-	}
 	room.Broadcast <- Message{
 		Action: ChatAction,
 		Target: MessageRoom{
@@ -168,7 +164,24 @@ func (client *Client) handleChatAction(message Message, room *Room) {
 		},
 		Payload: MessageChatPayload{
 			Message: message.Payload.(string),
-			Clients: clients,
+		},
+	}
+}
+
+func (client *Client) handleDrawingAction(message Message, room *Room) {
+	room.Broadcast <- Message{
+		Action: DrawingAction,
+		Target: MessageRoom{
+			RoomID: room.RoomID,
+		},
+		Sender: MessageClient{
+			ClientName: client.ClientName,
+			ClientID:  client.ClientID,
+		},
+		Payload: MessageDrawingPayload{
+			OffsetX: message.Payload.(map[string]interface{})["offset_x"].(float64),
+			OffsetY: message.Payload.(map[string]interface{})["offset_y"].(float64),
+			State:   message.Payload.(map[string]interface{})["state"].(string),
 		},
 	}
 }
